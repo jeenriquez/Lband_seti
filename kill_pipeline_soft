@@ -1,0 +1,6 @@
+#! /bin/bash
+
+./do_all_bl "pkill -f L-band_seti_pipeline.py"
+
+
+

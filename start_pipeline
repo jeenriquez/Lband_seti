@@ -1,0 +1,12 @@
+#! /bin/bash
+
+#-------------------------------------------------------------
+# Set environment.
+LOCALDIR=/datax/users/eenriquez/L-band_analysis/
+
+cd $LOCALDIR
+
+#-------------------------------------------------------------
+#start pipeline
+
+python /home/eenriquez/software/Lband_set/L-band_seti_pipeline.py
