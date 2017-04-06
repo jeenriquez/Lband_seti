@@ -2,7 +2,7 @@
 
 #-------------------------------------------------------------
 # Set environment.
-LOCALDIR=/datax/users/eenriquez
+LOCALDIR=/datax/users/eenriquez/L-band_analysis/
 SPIDEROUT=$LOCALDIR/`hostname`.spider2.local.out.`date "+%s"`
 
 if [ ! -d "$LOCALDIR" ]; then

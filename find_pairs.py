@@ -192,7 +192,7 @@ for a_star in alist_completed_unique:
         else:
 
             #a_star_file_name, b_star_file_name
-            tmp_string = [a_name,'\n',b_name]
+            tmp_string = ['/mnt_'+local_host+'/'+a_name,'\n','/mnt_'+local_host+'/'+b_name]
 
             list_targets += ' '.join(tmp_string)+'\n'
 
@@ -201,7 +201,7 @@ for a_star in alist_completed_unique:
 #---------------------------
 #Save lists
 
-with open('/datax/users/eenriquez/'+'%s_band_target_pairs.lst'%band,'w') as file_list:
+with open('/datax/users/eenriquez/L-band_analysis/'+'%s_band_target_pairs.lst'%band,'w') as file_list:
     file_list.write(list_targets)
 
 
