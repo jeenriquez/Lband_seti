@@ -88,11 +88,11 @@ def cmd_tool(args=None):
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
 
-        with open(out_dir+'logs/'+star_name.replace('.h5','.seti_event.log'), 'a') as f:
+        with open(out_dir+'logs/'+star_name.replace('.fil','.seti_event.log'), 'a') as f:
             f.write(out)
 
         if err or proc.returncode != 0:
-            with open(out_dir+'logs/'+star_name.replace('.h5','.seti_event.err'), 'a') as f:
+            with open(out_dir+'logs/'+star_name.replace('.fil','.seti_event.err'), 'a') as f:
                 f.write(err)
 
             #------------------------------------
@@ -100,7 +100,7 @@ def cmd_tool(args=None):
 
             error_list = extra_path+out_dir+'L_band_failed_targets.lst'
 
-            with open(done_list,'a') as file_fail:
+            with open(error_list,'a') as file_fail:
                 file_fail.write(star)
 
 if __name__ == "__main__":
