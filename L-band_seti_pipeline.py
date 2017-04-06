@@ -24,7 +24,7 @@ def cmd_tool(args=None):
 
     p = OptionParser()
     p.set_usage('python L-band_seti_pipeline.py <FULL_PATH_TO_FIL_FILE> [options]')
-    p.add_option('-o', '--out_dir', dest='out_dir', type='str', default='L-band_out', help='Location for output files. Default: local dir. ')
+    p.add_option('-o', '--out_dir', dest='out_dir', type='str', default='stars_out', help='Location for output files. Default: local dir. ')
     p.add_option('-n', '--node', dest='node', type='str', default=local_host, help='Name of host node.')
     opts, args = p.parse_args(sys.argv[1:])
 
@@ -62,17 +62,21 @@ def cmd_tool(args=None):
                 file_done.write(star)
 
         #------------------------------------
-        #Naming
+        #Naming, and choosing the right path.
 
-        star_path = star.split('spliced')[0]
         star_name = 'spliced'+star.replace('.fil','.h5').split('spliced')[-1]
+
+        if node == local_host
+            star_path = '/datax'+star.split('/datax')[-1].split('spliced')[0].rstrip('/')+'/'
+        else:
+            star_path = star.split('spliced')[0].rstrip('/')+'/'
 
         #------------------------------------
         #Run turbo_seti
 
         out,err = reset_outs()
 
-        command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star,'-M','2','-c','115,395']
+        command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star_path+star_name,'-M','2','-c','115,395']
         print ' '.join(command)
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()

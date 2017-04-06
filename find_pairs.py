@@ -15,7 +15,7 @@ parser.add_argument('band', type=str,default='L', help='Which band to use?')
 args = parser.parse_args()
 
 #Available bands
-ok_bands = 'L,S'
+ok_bands = 'L'
 
 if args.band not in ok_bands:
     raise ValueError('Please probide one of the available bands:' + ok_bands)
@@ -89,12 +89,8 @@ df3 = df3[df3['Number of samples'] == 16 ]
 #Check for high resolution data with the bad central frequency.
 # The two main frequency resolutions used are -2.7939677238464355e-06 and -2.835503418452676e-06  .
 
-if band == 'S':
-    df_good_mid_Freq = df3[((df3['mid_Freq'] > 2401.4) & (df3['mid_Freq'] < 2401.5))]
-    df_good_mid_Freq2 = df3[((df3['mid_Freq2'] > 2401.4) & (df3['mid_Freq2'] < 2401.5))]
-elif band == 'L':
-    df_good_mid_Freq = df3[((df3['mid_Freq'] > 1501.4) & (df3['mid_Freq'] < 1501.5))]
-    df_good_mid_Freq2 = df3[((df3['mid_Freq2'] > 1501.4) & (df3['mid_Freq2'] < 1501.5))]
+df_good_mid_Freq = df3[((df3['mid_Freq'] > 1501.4) & (df3['mid_Freq'] < 1501.5))]
+df_good_mid_Freq2 = df3[((df3['mid_Freq2'] > 1501.4) & (df3['mid_Freq2'] < 1501.5))]
 
 else:
     raise ValueError('Please probide one of the available bands:' + ok_bands)
@@ -145,14 +141,9 @@ print 'Have at least 3 observations : %i'%(len(alist_completed_unique))
 #Creating list of targets
 
 list_targets =''
-
 i = 0
 
 for a_star in alist_completed_unique:
-
-    #This if statement is specific to Norwegian Wood. since limiting the number of S band data analysed.
-    if band == 'S' and i > 10:
-        continue
 
     df_a_star = df_targets_alist[df_targets_alist['Source Name'] == a_star]
     list_a_star_times = df_a_star['Time stamp of first sample (MJD)'].unique()
@@ -190,12 +181,9 @@ for a_star in alist_completed_unique:
         if a_name.split('/')[1] != b_name.split('/')[1]:
             continue
         else:
-
             #a_star_file_name, b_star_file_name
-            tmp_string = ['/mnt_'+local_host+'/'+a_name,'\n','/mnt_'+local_host+'/'+b_name]
-
-            list_targets += ' '.join(tmp_string)+'\n'
-
+            tmp_string = ['/mnt_'+local_host+a_name,'\n','/mnt_'+local_host+'/'+b_name]
+            list_targets += ''.join(tmp_string)+'\n'
             i+=1
 
 #---------------------------

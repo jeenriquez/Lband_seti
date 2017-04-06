@@ -15,10 +15,6 @@ if [ ! -d "$LOCALDIR/stars_out" ]; then
   mkdir $LOCALDIR/stars_out
 fi
 
-chmod 777 $LOCALDIR
-chmod 777 $LOCALDIR/logs
-chmod 777 $LOCALDIR/stars_out
-
 cd $LOCALDIR
 
 #-------------------------------------------------------------
