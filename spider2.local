@@ -1,0 +1,11 @@
+#! /bin/csh
+
+# foreach i (`find /datax /datax2 /datax3 /mnt_*/datax /mnt_*/datax2 /mnt_*/datax3 -name "blc*.fil" -print`)
+# foreach i (`find /mnt_blc2*/datax2 /mnt_bls[1-3]/datax /mnt_bls[1-3]/datax2 /mnt_bls[1-3]/datax3 -name "spliced*blc*.fil" -print`)
+foreach i (`find /datax*/collate/AGBT* -name "spliced*blc*.fil" -print | grep -vi "no match"`)
+  echo -n "file=${i},"
+#  /home/obs/bin/header_wrapper $i | awk -F" : " 'NR>1 {printf("%s=%s,",$1,$2)}' | sed 's/ *=/=/g' | sed 's/= */=/g' | sed 's/  */ /g' | sed 's/,$//'
+  /usr/local/sigproc/bin/header $i | awk -F" : " 'NR>1 {printf("%s=%s,",$1,$2)}' | sed 's/ *=/=/g' | sed 's/= */=/g' | sed 's/  */ /g' | sed 's/,$//'
+  echo ""
+end
+exit 0
