@@ -9,4 +9,4 @@ cd $LOCALDIR
 #-------------------------------------------------------------
 #start pipeline
 
-python /home/eenriquez/software/Lband_set/L-band_seti_pipeline.py
+python /home/eenriquez/software/Lband_seti/L-band_seti_pipeline.py
