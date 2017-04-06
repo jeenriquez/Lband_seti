@@ -182,7 +182,7 @@ for a_star in alist_completed_unique:
             continue
         else:
             #a_star_file_name, b_star_file_name
-            tmp_string = ['/mnt_'+local_host+a_name,'\n','/mnt_'+local_host+'/'+b_name]
+            tmp_string = ['/mnt_'+local_host+a_name,'\n','/mnt_'+local_host+b_name]
             list_targets += ''.join(tmp_string)+'\n'
             i+=1
 
