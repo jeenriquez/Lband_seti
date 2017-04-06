@@ -1,0 +1,6 @@
+#! /bin/bash
+
+/opt/pyve/woodpy/norwegian/wood_crafting/data_process/do_all_bl "pkill -f woodpy/norwegian"
+
+
+
