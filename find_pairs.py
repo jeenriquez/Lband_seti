@@ -89,9 +89,9 @@ df3 = df3[df3['Number of samples'] == 16 ]
 #Check for high resolution data with the bad central frequency.
 # The two main frequency resolutions used are -2.7939677238464355e-06 and -2.835503418452676e-06  .
 
-df_good_mid_Freq = df3[((df3['mid_Freq'] > 1501.4) & (df3['mid_Freq'] < 1501.5))]
-df_good_mid_Freq2 = df3[((df3['mid_Freq2'] > 1501.4) & (df3['mid_Freq2'] < 1501.5))]
-
+if band == 'L':
+    df_good_mid_Freq = df3[((df3['mid_Freq'] > 1501.4) & (df3['mid_Freq'] < 1501.5))]
+    df_good_mid_Freq2 = df3[((df3['mid_Freq2'] > 1501.4) & (df3['mid_Freq2'] < 1501.5))]
 else:
     raise ValueError('Please probide one of the available bands:' + ok_bands)
 
