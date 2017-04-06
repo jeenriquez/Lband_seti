@@ -24,7 +24,7 @@ def cmd_tool(args=None):
 
     p = OptionParser()
     p.set_usage('python L-band_seti_pipeline.py <FULL_PATH_TO_FIL_FILE> [options]')
-    p.add_option('-o', '--out_dir', dest='out_dir', type='str', default='stars_out', help='Location for output files. Default: local dir. ')
+    p.add_option('-o', '--out_dir', dest='out_dir', type='str', default='/datax/users/eenriquez/L-band_analysis/', help='Location for output files. Default: local dir. ')
     p.add_option('-n', '--node', dest='node', type='str', default=local_host, help='Name of host node.')
     opts, args = p.parse_args(sys.argv[1:])
 
@@ -32,9 +32,17 @@ def cmd_tool(args=None):
     node = opts.node
 
     #------------------------------------
+    #Check if running locally
+
+    if node == local_host:
+        extra_path = ''
+    else:
+        extra_path = '/mnt_'+node
+
+    #------------------------------------
     #Check list of files todo
 
-    todo_list = '/mnt_'+node+'/datax/users/eenriquez/L-band_analysis/L_band_target_pairs.lst'
+    todo_list = extra_path+out_dir+'L_band_target_pairs.lst'
 
     with open(todo_list) as files_todo:
         stars_todo = files_todo.readlines()
@@ -43,11 +51,10 @@ def cmd_tool(args=None):
     #Loop over todo files
 
     for star in stars_todo:
-
         #------------------------------------
         #Check list of already done
 
-        done_list = '/mnt_'+node+'/datax/users/eenriquez/L-band_analysis/L_band_processed_targets.lst'
+        done_list = extra_path+out_dir+'L_band_processed_targets.lst'
 
         with open(done_list) as file_done:
             stars_done = file_done.readlines()
@@ -66,7 +73,7 @@ def cmd_tool(args=None):
 
         star_name = 'spliced'+star.replace('.fil','.h5').split('spliced')[-1]
 
-        if node == local_host
+        if node == local_host:
             star_path = '/datax'+star.split('/datax')[-1].split('spliced')[0].rstrip('/')+'/'
         else:
             star_path = star.split('spliced')[0].rstrip('/')+'/'
@@ -76,22 +83,22 @@ def cmd_tool(args=None):
 
         out,err = reset_outs()
 
-        command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star_path+star_name,'-M','2','-c','115,395']
+        command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star_path+star_name,'-M','2','-s','20','-c','115,395','-o',out_dir+'stars_out/']
         print ' '.join(command)
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
 
-        with open(out_dir+star_name.replace('.h5','.seti_event.log'), 'a') as f:
+        with open(out_dir+'log/'+star_name.replace('.h5','.seti_event.log'), 'a') as f:
             f.write(out)
 
         if err or proc.returncode != 0:
-            with open(out_dir+star_name.replace('.h5','.seti_event.err'), 'a') as f:
+            with open(out_dir+'log/'+star_name.replace('.h5','.seti_event.err'), 'a') as f:
                 f.write(err)
 
             #------------------------------------
             #Add failed one to list.
 
-            error_list = '/mnt_'+node+'/datax/users/eenriquez/L-band_analysis/L_band_failed_targets.lst'
+            error_list = extra_path+out_dir+'L_band_failed_targets.lst'
 
             with open(done_list,'a') as file_fail:
                 file_fail.write(star)
