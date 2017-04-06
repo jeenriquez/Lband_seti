@@ -71,7 +71,7 @@ def cmd_tool(args=None):
         #------------------------------------
         #Naming, and choosing the right path.
 
-        star_name = 'spliced'+star.replace('.fil','.h5').split('spliced')[-1]
+        star_name = 'spliced'+star.split('spliced')[-1]
 
         if node == local_host:
             star_path = '/datax'+star.split('/datax')[-1].split('spliced')[0].rstrip('/')+'/'
