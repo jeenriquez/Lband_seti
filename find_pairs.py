@@ -12,7 +12,6 @@ pd.options.mode.chained_assignment = None  # To remove pandas warnings: default=
 parser = ArgumentParser(description="Command line utility for creating a list of On/OFF pairs of spliced data.")
 parser.add_argument('filename', type=str, help='Full path and filenmae to read.')
 parser.add_argument('band', type=str,default='L', help='Which band to use?')
-parser.add_argument('mc_bucket', type=str, help='Location in the S3 object store. (ie. wood/nw-out-v0.1)')
 args = parser.parse_args()
 
 #Available bands
@@ -24,7 +23,6 @@ else:
     band = args.band
 
 filename = args.filename
-mc_bucket = args.mc_bucket
 
 #---------------------------
 # Read in the full "A list" of stars
@@ -147,8 +145,6 @@ print 'Have at least 3 observations : %i'%(len(alist_completed_unique))
 #Creating list of targets
 
 list_targets =''
-list_commands =''
-list_commands2 =''
 
 i = 0
 
@@ -195,34 +191,19 @@ for a_star in alist_completed_unique:
             continue
         else:
 
-            #star name, path, a_star_file_name, b_star_file_name
-            tmp_string = [str(i),a_star,a_name,b_name]
-
-            #mkdir, cd , run wood_chipper
-            cmd_string = ['']
-#             cmd_string += ['mkdir','/datax/users/wood/stars_out/'+a_star+'_%s_%s'%(local_host,band)+'_N%i'%i,'\n']
-#             cmd_string += ['ls','>','/datax/users/wood/stars_out/'+a_star+'_%s_%s'%(local_host,band)+'_N%i'%i+'/delete_me','\n']
-#             cmd_string += ['cd','/datax/users/wood/stars_out/','\n']
-#             cmd_string += ['mc','cp','--recursive',a_star+'_%s_%s'%(local_host,band)+'_N%i'%i,mc_bucket,'\n']
-#             cmd_string += ['cd','/datax/users/wood/stars_out/'+a_star+'_%s_%s'%(local_host,band)+'_N%i'%i,'\n']
-            cmd_string += ['/opt/pyve/woodpy/norwegian/wood_crafting/data_process/wood_chipper.py',a_name,b_name,band,a_star+'_%s_%s'%(local_host,band)+'_N%i'%i,mc_bucket,'\n']
+            #a_star_file_name, b_star_file_name
+            tmp_string = [a_name,'\n',b_name]
 
             list_targets += ' '.join(tmp_string)+'\n'
-            list_commands += ' '.join(cmd_string)
-#            list_commands2 += '    '.join(cmd_string2)+'\n'
 
             i+=1
 
 #---------------------------
 #Save lists
 
-with open('/datax/users/wood/'+'%s_band_target_pairs.wood_shavings.lst'%band,'w') as file_list:
+with open('/datax/users/eenriquez/'+'%s_band_target_pairs.lst'%band,'w') as file_list:
     file_list.write(list_targets)
 
-with open('/datax/users/wood/'+'%s_band_target_pairs.wood_chipper.sh'%band,'w') as file_list:
-    file_list.write(list_commands)
 
-# with open('/datax/wood/'+'%s_band_target_pairs.wood_chipper2.sh'%band,'w') as file_list:
-#     file_list.write(list_commands2)
 
 

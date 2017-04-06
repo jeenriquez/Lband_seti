@@ -1,13 +1,8 @@
 #! /bin/bash
 
 #-------------------------------------------------------------
-#activate python environment FTW.
-. /opt/pyve/activate woodpy
-
-#-------------------------------------------------------------
 # Set environment.
-LOCALDIR=/datax/users/wood
-PYVEROOT=/opt/pyve/woodpy/norwegian/
+LOCALDIR=/datax/users/eenriquez
 SPIDEROUT=$LOCALDIR/`hostname`.spider2.local.out.`date "+%s"`
 
 if [ ! -d "$LOCALDIR" ]; then
@@ -27,14 +22,10 @@ chmod 777 $LOCALDIR/stars_out
 cd $LOCALDIR
 
 #-------------------------------------------------------------
-#mc'ing all output data and logs
-export EXTRA=-v0.2
-export MC_DIR=wood/nw-output$EXTRA/
+#Find data and pairs.
 
-#-------------------------------------------------------------
+/home/eenriquez/software/Lband_seti/spider2.local >& $SPIDEROUT
 
-$PYVEROOT/wood_crafting/data_process/spider2.local >& $SPIDEROUT
-
-$PYVEROOT/wood_crafting/data_process/find_pairs.py $SPIDEROUT L  $MC_DIR >& $LOCALDIR/logs/find_pairs.out.`date "+%s"`
+/home/eenriquez/software/Lband_seti/find_pairs.py $SPIDEROUT L >& $LOCALDIR/logs/find_pairs.out.`date "+%s"`
 
 
