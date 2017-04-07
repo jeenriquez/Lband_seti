@@ -2,8 +2,9 @@
 
 #-------------------------------------------------------------
 # Set environment.
-LOCALDIR=/datax/users/eenriquez/L-band_analysis/
+source .bash_profile
 
+LOCALDIR=/datax/users/eenriquez/L-band_analysis/
 cd $LOCALDIR
 
 #-------------------------------------------------------------
