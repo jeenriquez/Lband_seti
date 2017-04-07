@@ -7,6 +7,8 @@ LOCALDIR=/datax/users/eenriquez/L-band_analysis/
 cd $LOCALDIR
 
 #-------------------------------------------------------------
-#start pipeline
+#Start pipeline
 
 python /home/eenriquez/software/Lband_seti/L-band_seti_pipeline.py
+
+echo "$HOSTNAME: Pipeline run done."
