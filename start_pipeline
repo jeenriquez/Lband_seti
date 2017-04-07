@@ -2,14 +2,16 @@
 
 #-------------------------------------------------------------
 # Set environment.
-source .bash_profile
+source $HOME/.bash_profile
 
 LOCALDIR=/datax/users/eenriquez/L-band_analysis/
 cd $LOCALDIR
 
+node=$1
+
 #-------------------------------------------------------------
 #Start pipeline
 
-python /home/eenriquez/software/Lband_seti/L-band_seti_pipeline.py
+python /home/eenriquez/software/Lband_seti/L-band_seti_pipeline.py -n $node
 
 echo "$HOSTNAME: Pipeline run done."
