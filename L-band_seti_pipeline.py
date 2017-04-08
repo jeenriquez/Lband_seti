@@ -127,6 +127,8 @@ def cmd_tool(args=None):
         #------------------------------------
         #Add failed one to list.
 
+        remove_h5=True
+
         if os.path.isfile(err_file):
             if os.path.getsize(err_file) > 0:
                 error_list = extra_path+out_dir+'L_band_failed_targets.lst'
@@ -137,7 +139,6 @@ def cmd_tool(args=None):
                 remove_h5 =False
             else:
                 os.remove(err_file)
-                remove_h5=True
 
         #------------------------------------
         #Delete h5 file
