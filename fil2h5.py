@@ -1,5 +1,6 @@
 from blimpy import Waterfall
 from optparse import OptionParser
+import sys
 
 import pdb;# pdb.set_trace()
 
@@ -8,7 +9,7 @@ def make_h5_file():
     '''
 
     p = OptionParser()
-    p.set_usage('python seti_event.py <FULL_PATH_TO_FIL_FILE> [options]')
+    p.set_usage('python fil25.py <FULL_PATH_TO_FIL_FILE> [options]')
     p.add_option('-o', '--out_dir', dest='out_dir', type='str', default='./', help='Location for output files. Default: local dir. ')
     opts, args = p.parse_args(sys.argv[1:])
 
