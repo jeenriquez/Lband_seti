@@ -93,7 +93,7 @@ def cmd_tool(args=None):
         err_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.err')
         out_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.log')
 
-        with open(out_file), 'a') as f:
+        with open(out_file, 'a') as f:
             f.write(out)
 
         if err or proc.returncode != 0:
@@ -114,7 +114,7 @@ def cmd_tool(args=None):
         out_file = out_dir+'logs/'+star_name.replace('.fil','.seti_event.log')
 #         try_it = os.system(' '.join(command) +' 2> '+err_file+' 1> '+out_file)
 
-        with open(out_file), 'a') as f:
+        with open(out_file, 'a') as f:
             f.write(out)
 
         if err or proc.returncode != 0:
