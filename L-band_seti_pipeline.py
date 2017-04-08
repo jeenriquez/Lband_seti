@@ -106,10 +106,13 @@ def cmd_tool(args=None):
         #Add failed one to list.
 
         if os.path.isfile(err_file):
-            error_list = extra_path+out_dir+'L_band_failed_targets.lst'
+            if os.path.getsize(err_file) > 0:
+                error_list = extra_path+out_dir+'L_band_failed_targets.lst'
 
-            with open(error_list,'a') as file_fail:
-                file_fail.write(star)
+                with open(error_list,'a') as file_fail:
+                    file_fail.write(star)
+            else:
+                os.remove(err_file)
 
         #------------------------------------
         #Delete h5 file
