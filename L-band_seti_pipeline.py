@@ -90,8 +90,8 @@ def cmd_tool(args=None):
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
 
-         err_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.err')
-         out_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.log')
+        err_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.err')
+        out_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.log')
 
         with open(out_file), 'a') as f:
             f.write(out)
@@ -110,8 +110,8 @@ def cmd_tool(args=None):
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
 
-         err_file = out_dir+'logs/'+star_name.replace('.fil','.seti_event.err')
-         out_file = out_dir+'logs/'+star_name.replace('.fil','.seti_event.log')
+        err_file = out_dir+'logs/'+star_name.replace('.fil','.seti_event.err')
+        out_file = out_dir+'logs/'+star_name.replace('.fil','.seti_event.log')
 #         try_it = os.system(' '.join(command) +' 2> '+err_file+' 1> '+out_file)
 
         with open(out_file), 'a') as f:
