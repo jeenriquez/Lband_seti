@@ -49,6 +49,10 @@ def cmd_tool(args=None):
         stars_todo = files_todo.readlines()
 
     #------------------------------------
+    #moving to output loc.
+    os.chdir(out_dir+'stars_out/')
+
+    #------------------------------------
     #Loop over todo files
 
     for star in stars_todo:
@@ -79,13 +83,12 @@ def cmd_tool(args=None):
         else:
             star_path = star.split('spliced')[0].rstrip('/')+'/'
 
-
         #------------------------------------
         # Make hdf5
 
         out,err = reset_outs()
 
-        command=['python','fil2h5.py',star_path+star_name,'-o',out_dir+'stars_out/']
+        command=['python','/home/eenriquez/software/Lband_seti/fil2h5.py',star_path+star_name]
         print ' '.join(command)
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
@@ -105,7 +108,7 @@ def cmd_tool(args=None):
 
         out,err = reset_outs()
 
-        command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',out_dir+'stars_out/'+star_name.replace('.fil','.h5'),'-M','2','-s','20','-c','115,395']
+        command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star_name.replace('.fil','.h5'),'-M','2','-s','20','-c','115,395']
         print ' '.join(command)
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
