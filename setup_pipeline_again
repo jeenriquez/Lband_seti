@@ -1,0 +1,18 @@
+#! /bin/bash
+
+#-------------------------------------------------------------
+# Set environment.
+LOCALDIR=/datax/users/eenriquez/L-band_analysis/
+
+cd $LOCALDIR
+
+#-------------------------------------------------------------
+#Find data and pairs.
+
+mv L_band_target_pairs.lst L_band_target_pairs_original.lst
+mv L_band_processed_targets.lst L_band_processed_targets_try1.lst
+
+mv L_band_failed_targets.lst L_band_target_pairs.lst
+touch L_band_processed_targets.lst
+
+echo "$HOSTNAME: Setup done."
