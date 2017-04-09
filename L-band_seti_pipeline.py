@@ -86,22 +86,24 @@ def cmd_tool(args=None):
         #------------------------------------
         # Make hdf5
 
-        out,err = reset_outs()
+        if not os.path.isfile(star_name.replace('.fil','.h5')):
 
-        command=['python','/home/eenriquez/software/Lband_seti/fil2h5.py',star_path+star_name]
-        print ' '.join(command)
-        proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (out, err) = proc.communicate()
+            out,err = reset_outs()
 
-        err_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.err')
-        out_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.log')
+            command=['python','/home/eenriquez/software/Lband_seti/fil2h5.py',star_path+star_name]
+            print ' '.join(command)
+            proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            (out, err) = proc.communicate()
 
-        with open(out_file, 'a') as f:
-            f.write(out)
+            err_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.err')
+            out_file = out_dir+'logs/'+star_name.replace('.fil','.make_h5.log')
 
-        if err or proc.returncode != 0:
-            with open(err_file, 'a') as f:
-                f.write(err)
+            with open(out_file, 'a') as f:
+                f.write(out)
+
+            if err or proc.returncode != 0:
+                with open(err_file, 'a') as f:
+                    f.write(err)
 
         #------------------------------------
         #Run turbo_seti
