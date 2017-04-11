@@ -14,5 +14,6 @@ echo "Targets:" && wc -l $LOCALDIR/L_band_t*
 echo "Processed:" && wc -l $LOCALDIR/L_band_p*
 echo "Failed:" && wc -l $LOCALDIR/L_band_f*
 echo "H5s left over:" && ls $LOCALDIR/stars_out/*h5 | wc -l
-
+echo "Started process with TurboSETI: " && ls /datax/users/eenriquez/L-band_analysis/stars_out/*dat  | wc -l
+echo "Completed TurboSETI: " && grep time: /datax/users/eenriquez/L-band_analysis/logs/*seti_event.log | wc -l
 
