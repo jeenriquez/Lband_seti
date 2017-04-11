@@ -21,7 +21,7 @@ local_host = socket.gethostname()
 
 
 def cmd_tool(args=None):
-    """ Command line tool for plotting and viewing info on filterbank files """
+    """ Command line tool for L-band-seti-pipeline. """
 
     p = OptionParser()
     p.set_usage('python L-band_seti_pipeline.py <FULL_PATH_TO_FIL_FILE> [options]')
@@ -57,6 +57,30 @@ def cmd_tool(args=None):
 
     for star in stars_todo:
         #------------------------------------
+        #Naming, and choosing the right path.
+
+        star_name = 'spliced'+star.split('spliced')[-1].rstrip()
+
+        if node == local_host:
+            star_path = '/datax'+star.split('/datax')[-1].split('spliced')[0].rstrip('/')+'/'
+        else:
+            star_path = star.split('spliced')[0].rstrip('/')+'/'
+
+        #------------------------------------
+        #Check list of bad data
+        bad_list = '/home/eenriquez/software/Lband_seti/bad_data.lst'
+
+        with open(bad_list) as file_bad_list:
+            stars_file_bad_list = file_bad_list.readlines()
+
+        #------------------------------------
+        # Skip if bad data.
+
+        if star_name in stars_file_bad_list:
+            print star_name +' is a baaaad star name.'
+            continue
+
+        #------------------------------------
         #Check list of already done
 
         done_list = extra_path+out_dir+'L_band_processed_targets.lst'
@@ -72,16 +96,6 @@ def cmd_tool(args=None):
         else:
             with open(done_list,'a') as file_done:
                 file_done.write(star)
-
-        #------------------------------------
-        #Naming, and choosing the right path.
-
-        star_name = 'spliced'+star.split('spliced')[-1].rstrip()
-
-        if node == local_host:
-            star_path = '/datax'+star.split('/datax')[-1].split('spliced')[0].rstrip('/')+'/'
-        else:
-            star_path = star.split('spliced')[0].rstrip('/')+'/'
 
         #------------------------------------
         # Make hdf5
