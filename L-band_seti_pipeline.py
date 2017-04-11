@@ -76,7 +76,7 @@ def cmd_tool(args=None):
         #------------------------------------
         # Skip if bad data.
 
-        if star_name in stars_file_bad_list:
+        if star_name in str(stars_file_bad_list):
             print star_name +' is a baaaad star name.'
             continue
 
