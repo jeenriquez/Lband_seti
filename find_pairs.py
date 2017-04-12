@@ -81,7 +81,6 @@ else:
     raise ValueError('Please probide one of the available bands:' + ok_bands)
 
 #---------------------------
-# Check for the ones that have been observed only once and have incomplete number of samples.
 #Check for correct Number of Samples
 df3 = df3[df3['Number of samples'] == 16 ]
 
@@ -141,6 +140,7 @@ print 'Have at least 3 observations : %i'%(len(alist_completed_unique))
 #Creating list of targets
 
 list_targets =''
+list_A_stars=''
 i = 0
 
 for a_star in alist_completed_unique:
@@ -157,11 +157,7 @@ for a_star in alist_completed_unique:
             ii = df_tmp[df_tmp['delta_t']>0.001]['delta_t'].idxmin()   #Find B star index  #.001 = 1.44 min
             jj = df_tmp[df_tmp['delta_t']>=0]['delta_t'].idxmin()   #Find A star index
         except:
-            try:
-                ii = df_tmp[ (df_tmp['delta_t']*-1.)>0.001]['delta_t'].idxmin()   #Find B star index
-                jj = df_tmp[df_tmp['delta_t']>=0]['delta_t'].idxmin()   #Find A star index
-            except:
-                continue
+            continue
 
 #             a_name = '/datax'+list(df_a_star[df_a_star['Time stamp of first sample (MJD)'] == a_time]['file'])[0].split('datax')[-1].replace('0000.fil','0002.fil')
 #             b_name = '/datax'+df_tmp['file'][ii].split('datax')[-1].replace('0000.fil','0002.fil')
@@ -174,11 +170,12 @@ for a_star in alist_completed_unique:
         b_name = df_tmp['file'][ii]
 
         if a_name == b_name:
-            print 'Skiping (a=b): ',node, a_name
+            print 'WARNING: Skiping (a=b). ',node, a_name
             continue
 
         #Find if data pairs are not in the same node (thus 'non-co-living').
         if a_name.split('/')[1] != b_name.split('/')[1]:
+            print 'WARNING: skiping since A and B not in same location.',node, a_name
             continue
         else:
             #a_star_file_name, b_star_file_name
@@ -186,12 +183,16 @@ for a_star in alist_completed_unique:
             list_targets += ''.join(tmp_string)+'\n'
             i+=1
 
+    list_A_stars+=a_star+'\n'
+
 #---------------------------
 #Save lists
 
 with open('/datax/users/eenriquez/L-band_analysis/'+'%s_band_target_pairs.lst'%band,'w') as file_list:
     file_list.write(list_targets)
 
+with open('/datax/users/eenriquez/L-band_analysis/'+'%s_band_A_stars.lst'%band,'w') as file_list:
+    file_list.write(list_A_stars)
 
 
 
