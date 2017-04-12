@@ -12,6 +12,6 @@ node=$1
 #-------------------------------------------------------------
 #Start pipeline
 
-python /home/eenriquez/software/Lband_seti/L-band_seti_pipeline.py -n $node
+python /home/eenriquez/software/Lband_seti/processing/L-band_seti_pipeline.py -n $node
 
 echo "$HOSTNAME: Pipeline run done."
