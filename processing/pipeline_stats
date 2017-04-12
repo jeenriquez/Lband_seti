@@ -10,10 +10,11 @@ cd $LOCALDIR
 
 date
 echo "$HOSTNAME: Stats."
-echo "Targets:" && wc -l $LOCALDIR/L_band_t*
+echo "All Targets:" && wc -l $LOCALDIR/L_band_t* 
+echo "Targets this run:" && grep collate $LOCALDIR/L_band_target_pairs.lst | wc -l
 echo "Processed:" && wc -l $LOCALDIR/L_band_p*
 echo "Failed:" && wc -l $LOCALDIR/L_band_f*
 echo "H5s left over:" && ls $LOCALDIR/stars_out/*h5 | wc -l
-echo "Started process with TurboSETI: " && ls /datax/users/eenriquez/L-band_analysis/stars_out/*dat  | wc -l
-echo "Completed TurboSETI: " && grep time: /datax/users/eenriquez/L-band_analysis/logs/*seti_event.log | wc -l
+echo "Started process with TurboSETI: " && ls $LOCALDIR/stars_out/*dat  | wc -l
+echo "Completed TurboSETI: " && grep time: $LOCALDIR/logs/*seti_event.log | wc -l
 
