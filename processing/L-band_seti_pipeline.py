@@ -68,7 +68,7 @@ def cmd_tool(args=None):
 
         #------------------------------------
         #Check list of bad data
-        bad_list = '/home/eenriquez/software/Lband_seti/bad_data.lst'
+        bad_list = '/home/eenriquez/software/Lband_seti/data_logs/bad_data.lst'
 
         with open(bad_list) as file_bad_list:
             stars_file_bad_list = file_bad_list.readlines()
@@ -104,7 +104,7 @@ def cmd_tool(args=None):
 
             out,err = reset_outs()
 
-            command=['python','/home/eenriquez/software/Lband_seti/fil2h5.py',star_path+star_name]
+            command=['python','/home/eenriquez/software/Lband_seti/processing/fil2h5.py',star_path+star_name]
             print ' '.join(command)
             proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             (out, err) = proc.communicate()

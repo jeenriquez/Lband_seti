@@ -20,9 +20,9 @@ cd $LOCALDIR
 #-------------------------------------------------------------
 #Find data and pairs.
 
-/home/eenriquez/software/Lband_seti/spider2.local >& $SPIDEROUT
+/home/eenriquez/software/Lband_seti/processing/spider2.local >& $SPIDEROUT
 
-/home/eenriquez/software/Lband_seti/find_pairs.py $SPIDEROUT L >& $LOCALDIR/logs/find_pairs.out.`date "+%s"`
+/home/eenriquez/software/Lband_seti/processing/find_pairs.py $SPIDEROUT L >& $LOCALDIR/logs/find_pairs.out.`date "+%s"`
 
 touch L_band_processed_targets.lst
 
