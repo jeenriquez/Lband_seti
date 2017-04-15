@@ -61,7 +61,7 @@ def cmd_tool(args=None):
 
         star_name = 'spliced'+star.split('spliced')[-1].rstrip()
 
-        if node == local_host:
+        if node == local_host and local_host!='bls0':
             star_path = '/datax'+star.split('/datax')[-1].split('spliced')[0].rstrip('/')+'/'
         else:
             star_path = star.split('spliced')[0].rstrip('/')+'/'
@@ -124,7 +124,10 @@ def cmd_tool(args=None):
 
         out,err = reset_outs()
 
-        command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star_name.replace('.fil','.h5'),'-M','2','-s','20','-c','115,395']
+        if 'blc0001020304050607' in star_name:
+            command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star_name.replace('.fil','.h5'),'-M','2','-s','20','-c','115,395']
+        else:
+            command=['python','/home/eenriquez/software/bl-soft/turbo_seti/bin/seti_event.py',star_name.replace('.fil','.h5'),'-M','2','-s','20']
         print ' '.join(command)
         proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
