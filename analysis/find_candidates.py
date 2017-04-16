@@ -15,7 +15,7 @@ def make_table(filename,init=False):
     '''
 
     if init:
-        columns = ['FileID','Source','MJD','RA','DEC','TopHitNum','DriftRate', 'SNR', 'Freq', 'ChanIndx', 'FreqStart', 'FreqEnd', 'CoarseChanNum', 'FullNumHitsInRange','status','Hit_ID']
+        columns = ['FileID','Source','MJD','RA','DEC','TopHitNum','DriftRate', 'SNR', 'Freq', 'ChanIndx', 'FreqStart', 'FreqEnd', 'CoarseChanNum', 'FullNumHitsInRange','status','Hit_ID','ON_in_range','RFI_in_range']
         df_data = pd.DataFrame(columns=columns)
 
     else:
@@ -60,7 +60,7 @@ def make_table(filename,init=False):
 
         #Adding header information.
         df_data['FileID'] = FileID
-        df_data['Source'] = Source
+        df_data['Source'] = Source.upper()
         df_data['MJD'] = MJD
         df_data['RA'] = RA
         df_data['DEC'] = DEC
@@ -68,6 +68,8 @@ def make_table(filename,init=False):
         #Adding extra columns.
         df_data['Hit_ID'] = ''
         df_data['status'] = ''
+        df_data['ON_in_range'] = ''
+        df_data['RFI_in_range'] = ''
 
     return df_data
 
@@ -111,7 +113,7 @@ def find_candidates(A1_table,A_table,B_table):
 
         for row_index, row in AA_table.iterrows():
             Ai_table = A_table[((A_table['Freq']>row['FreqStart']) & (A_table['Freq']<row['FreqEnd']))]
-            Ai_table['Hit_ID'] = row['Source']+str(row_index)
+            Ai_table['Hit_ID'] = row['Source']+'_'+str(row_index)
             AAA_table_list.append(Ai_table)
         AAA_table = pd.concat(AAA_table_list)
     else:
@@ -122,254 +124,307 @@ def find_candidates(A1_table,A_table,B_table):
     return AAA_table
 
 
+def remomve_RFI_regions(AAA_candidates):
+    ''' Removing regions with lots of known RFI.
+    '''
 
-#---------------------------
-#Setting things up.
+    #Removing corrupt files.
+#    AAA_HIP69357 = AAA_candidates[AAA_candidates['Source']=='HIP69357']   # Want to look at the waterfall plots. Very strange behavior.
+    AAA_candidates = AAA_candidates[AAA_candidates['Source']!='HIP69357']
 
-project_dir = '/Users/jeenriquez/RESEARCH/SETI_BL/L_band/'
+    #Removing Hydrogen line
+#    Hydrogen_candidates = AAA_candidates[((AAA_candidates['Freq'] > 1420.) & (AAA_candidates['Freq'] < 1421.))]   # Could plot RA-DEC, and see distribution (maybe galactic plane??).
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1420.) & (AAA_candidates['Freq'] < 1421.))]
 
-t0 = time.time()
+    #Removing Iridium signal.
+#    AAA_Iridium = AAA_candidates[~((AAA_candidates['Freq'] > 1626.) & (AAA_candidates['Freq'] < 1626.5))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1626.) & (AAA_candidates['Freq'] < 1626.5))]
+    #Removing GOES signal
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1675.8) & (AAA_candidates['Freq'] < 1676.2))]
 
-#---------------------------
-# Read in the full "A list" of stars.
-#---------------------------
-a_list_master = open(project_dir+'A_stars.lst').read().splitlines()
+    #Removing bright GPS regions. http://www.gps.gov/systems/gps/modernization/civilsignals/
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1376.) & (AAA_candidates['Freq'] < 1386.))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1570.) & (AAA_candidates['Freq'] < 1580.))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1595.) & (AAA_candidates['Freq'] < 1610.))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1163.5) & (AAA_candidates['Freq'] < 1188.5 ))]  #L5 #https://www.rfglobalnet.com/doc/1176-mhz-gps-l5-band-ceramic-notch-filter-0001
 
-all_dats = 'Need to open here the dats file.'
+    #Mobile-satellite communications.
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1555.) & (AAA_candidates['Freq'] < 1559.))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1656.5) & (AAA_candidates['Freq'] < 1660.5))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1545.) & (AAA_candidates['Freq'] < 1547.))] #Alphasat 1545.5MHz + Inmarsat Aero
 
-#---------------------------
-# Find the good  data by:
-# - Reading in the output from spider.
-#---------------------------
-# Initial data frame set up
+    #removing from    1520-1560?
 
-spider_filename = project_dir+'/spider_outs/spider2.out.04.11.17'
-
-try:
-    df = pd.read_csv(spider_filename, sep=",|=", header=None,engine='python')
-except:
-    IOError('Error opening file: %s'%filename)
-
-df2 = df.ix[:,1::2]
-df2.columns = list(df.ix[0,0::2])
-
-
-#Selection of high resolution data
-df = df2[df2['file'].str.contains("gpuspec.0000.fil",na=False)]
-
-#Selection of observations from given band (soft)
-df = df[df['Frequency of channel 1 (MHz)'] < 2500]
-
-#Selection of observations from blc30 (since also in bls1).
-df = df[~df['file'].str.contains('mnt_blc30')]
-
-#---------------------------
-#Check for correct Number of Samples
-df = df[df['Number of samples'] == 16 ]
-
-#---------------------------
-# Adding some extra columns for later look at the good set of data.
-
-df['bands_used'] = [df['file'][ii].split('/')[-1].split('_')[1].replace('blc','') for ii in df.index]
-df['mid_Freq'] = df['Frequency of channel 1 (MHz)']-2.835503418452676e-06*df['Number of channels']/2.
-df['mid_Freq2'] = df['Frequency of channel 1 (MHz)']-2.7939677238464355e-06*df['Number of channels']/2.
-
-df['Source Name'] = df['Source Name'].str.upper()
-
-#---------------------------
-#Check the data that has the 4 good bands (02030405).
-df = df[df['bands_used'].str.contains('02030405')]
-
-#---------------------------
-#Check for high resolution data with the bad central frequency.
-# The two main frequency resolutions used are -2.7939677238464355e-06 and -2.835503418452676e-06  .
-
-df_good_mid_Freq = df[((df['mid_Freq'] > 1501.4) & (df['mid_Freq'] < 1501.5))]
-df_good_mid_Freq2 = df[((df['mid_Freq2'] > 1501.4) & (df['mid_Freq2'] < 1501.5))]
-
-df = pd.concat([df_good_mid_Freq,df_good_mid_Freq2])
-
-#---------------------------
-# Apply format change in MJD
-df['Time stamp of first sample (MJD)'] = df['Time stamp of first sample (MJD)'].apply(pd.to_numeric)
-
-#---------------------------
-#Adding extra columns
-
-#df['obs_run'] = df.apply(lambda x: x['file'].split('collate/')[-1].split('/spliced')[0])
-df['obs_run'] = [df['file'][ii].split('collate/')[-1].split('/spliced')[0] for ii in df.index]
-#df['filename_dat'] = df.apply(lambda x: 'spliced'+x['file'].split('/spliced')[-1].replace('.fil','.h5'))
-df['filename_dat'] = ['spliced'+df['file'][ii].split('/spliced')[-1].replace('.fil','.dat') for ii in df.index]
-
-#
-# #---------------------------
-# # Selecting only the targets in the A-list
-#
-# #Selecting all the targets from the B list
-# df_targets_blist = df[~df['Source Name'].isin(a_list_master)]
-# df_targets_clist =  df[df['Source Name'].str.contains('_OFF',na=False)]
-# df_targets_blist = pd.concat([df_targets_blist,df_targets_clist])
-# else_list = df_targets_blist['Source Name'].unique()
-#
-# #Selecting all the good targets from the A list
-# df_targets_alist = df[~df['Source Name'].isin(else_list)]
-#
-# #---------------------------
-# #Showing some info
-#
-# print '------      o      --------'
-# a_unique = df_targets_alist['Source Name'].unique()
-# print 'This list was created for the L band data'
-# print 'The total number of targets from the A-list that:'
-# print 'Observed and spliced is      : %i'%(len(a_unique))
-#
-# #---------------------------
-# #Group the df_targets and look for the ones observed 3 times or more
-# # Grouping without date constrains.
-# df_targets = df_targets_alist.groupby('Source Name').count()['file'] > 2
-# df_bool_list = df_targets.tolist()
-# list_completed = list(df_targets[df_bool_list].index.values)
-#
-# #---------------------------
-# #Selecting targets with "completed" observations
-# df_targets_alist = df_targets_alist[df_targets_alist['Source Name'].isin(list_completed)]
-# alist_completed_unique = df_targets_alist['Source Name'].unique()
-#
-# print 'Have at least 3 observations : %i'%(len(alist_completed_unique))
+    #NOAA 17,18	1707 MHz	1700-1710 MHz	Meteorological-satellite service
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1700.) & (AAA_candidates['Freq'] < 1710.))]
 
 
+    return AAA_candidates
 
 
-#---------------------------
-#Looping over observing run.
-
-AAA_candidates_list = []
-AAA_candidates = make_table('',init=True)
-obs_runs = df['obs_run'].unique()
-a_list = []
-
-for obs_run in obs_runs:
-
-    df_single_run = df[df['obs_run'].str.contains(obs_run,na=False)]
+if __name__ == "__main__":
 
     #---------------------------
-    # Selecting only the targets in the A-list
+    #Setting things up.
 
-    #Selecting all the targets from the B list
-    df_targets_blist = df_single_run[~df_single_run['Source Name'].isin(a_list_master)]
-    df_targets_clist =  df_single_run[df_single_run['Source Name'].str.contains('_OFF',na=False)]
-    df_targets_blist = pd.concat([df_targets_blist,df_targets_clist])
-    else_list = df_targets_blist['Source Name'].unique()
+    project_dir = '/Users/jeenriquez/RESEARCH/SETI_BL/L_band/'
 
-    #Selecting all the good targets from the A list
-    df_targets_alist = df_single_run[~df_single_run['Source Name'].isin(else_list)]
+    t0 = time.time()
 
     #---------------------------
-    #Group the df_targets and look for the ones observed 3 times or more
-    df_targets = df_targets_alist.groupby('Source Name').count()['file'] > 2
-    df_bool_list = df_targets.tolist()
-    list_completed = list(df_targets[df_bool_list].index.values)
+    # Read in the full "A list" of stars.
+    #---------------------------
+    a_list_master = open(project_dir+'A_stars.lst').read().splitlines()
+
+    all_dats = 'Need to open here the dats file.'
 
     #---------------------------
-    #Selecting targets with a complete set of observations
-    df_targets_alist = df_targets_alist[df_targets_alist['Source Name'].isin(list_completed)]
-    alist_completed_unique = list(df_targets_alist['Source Name'].unique())
-
-    a_list += alist_completed_unique
+    # Find the good  data by:
+    # - Reading in the output from spider.
     #---------------------------
-    #Looping over the A stars
+    # Initial data frame set up
 
-    for a_star in alist_completed_unique:
-        kk = 1
+    spider_filename = project_dir+'/spider_outs/spider2.out.04.11.17'
 
-        df_a_star = df_targets_alist[df_targets_alist['Source Name'] == a_star]
-        list_a_star_times = df_a_star['Time stamp of first sample (MJD)'].unique()
+    try:
+        df = pd.read_csv(spider_filename, sep=",|=", header=None,engine='python')
+    except:
+        IOError('Error opening file: %s'%filename)
+
+    df2 = df.ix[:,1::2]
+    df2.columns = list(df.ix[0,0::2])
+
+
+    #Selection of high resolution data
+    df = df2[df2['file'].str.contains("gpuspec.0000.fil",na=False)]
+
+    #Selection of observations from given band (soft)
+    df = df[df['Frequency of channel 1 (MHz)'] < 2500]
+
+    #Selection of observations from blc30 (since also in bls1).
+    df = df[~df['file'].str.contains('mnt_blc30')]
+
+    #---------------------------
+    #Check for correct Number of Samples
+    df = df[df['Number of samples'] == 16 ]
+
+    #---------------------------
+    # Adding some extra columns for later look at the good set of data.
+
+    df['bands_used'] = [df['file'][ii].split('/')[-1].split('_')[1].replace('blc','') for ii in df.index]
+    df['mid_Freq'] = df['Frequency of channel 1 (MHz)']-2.835503418452676e-06*df['Number of channels']/2.
+    df['mid_Freq2'] = df['Frequency of channel 1 (MHz)']-2.7939677238464355e-06*df['Number of channels']/2.
+
+    df['Source Name'] = df['Source Name'].str.upper()
+
+    #---------------------------
+    #Check the data that has the 4 good bands (02030405).
+    df = df[df['bands_used'].str.contains('02030405')]
+
+    #---------------------------
+    #Check for high resolution data with the bad central frequency.
+    # The two main frequency resolutions used are -2.7939677238464355e-06 and -2.835503418452676e-06  .
+
+    df_good_mid_Freq = df[((df['mid_Freq'] > 1501.4) & (df['mid_Freq'] < 1501.5))]
+    df_good_mid_Freq2 = df[((df['mid_Freq2'] > 1501.4) & (df['mid_Freq2'] < 1501.5))]
+
+    df = pd.concat([df_good_mid_Freq,df_good_mid_Freq2])
+
+    #---------------------------
+    # Apply format change in MJD
+    df['Time stamp of first sample (MJD)'] = df['Time stamp of first sample (MJD)'].apply(pd.to_numeric)
+
+    #---------------------------
+    #Adding extra columns
+
+    #df['obs_run'] = df.apply(lambda x: x['file'].split('collate/')[-1].split('/spliced')[0])
+    df['obs_run'] = [df['file'][ii].split('collate/')[-1].split('/spliced')[0] for ii in df.index]
+    #df['filename_dat'] = df.apply(lambda x: 'spliced'+x['file'].split('/spliced')[-1].replace('.fil','.h5'))
+    df['filename_dat'] = ['spliced'+df['file'][ii].split('/spliced')[-1].replace('.fil','.dat') for ii in df.index]
+
+    #
+    # #---------------------------
+    # # Selecting only the targets in the A-list
+    #
+    # #Selecting all the targets from the B list
+    # df_targets_blist = df[~df['Source Name'].isin(a_list_master)]
+    # df_targets_clist =  df[df['Source Name'].str.contains('_OFF',na=False)]
+    # df_targets_blist = pd.concat([df_targets_blist,df_targets_clist])
+    # else_list = df_targets_blist['Source Name'].unique()
+    #
+    # #Selecting all the good targets from the A list
+    # df_targets_alist = df[~df['Source Name'].isin(else_list)]
+    #
+    # #---------------------------
+    # #Showing some info
+    #
+    # print '------      o      --------'
+    # a_unique = df_targets_alist['Source Name'].unique()
+    # print 'This list was created for the L band data'
+    # print 'The total number of targets from the A-list that:'
+    # print 'Observed and spliced is      : %i'%(len(a_unique))
+    #
+    # #---------------------------
+    # #Group the df_targets and look for the ones observed 3 times or more
+    # # Grouping without date constrains.
+    # df_targets = df_targets_alist.groupby('Source Name').count()['file'] > 2
+    # df_bool_list = df_targets.tolist()
+    # list_completed = list(df_targets[df_bool_list].index.values)
+    #
+    # #---------------------------
+    # #Selecting targets with "completed" observations
+    # df_targets_alist = df_targets_alist[df_targets_alist['Source Name'].isin(list_completed)]
+    # alist_completed_unique = df_targets_alist['Source Name'].unique()
+    #
+    # print 'Have at least 3 observations : %i'%(len(alist_completed_unique))
+
+
+
+
+    #---------------------------
+    #Looping over observing run.
+
+    AAA_candidates_list = []
+    AAA_candidates = make_table('',init=True)
+    obs_runs = df['obs_run'].unique()
+    a_list = []
+
+    for obs_run in obs_runs:
+
+        df_single_run =  df[df['obs_run'] == obs_run]
 
         #---------------------------
-        # Reading hits data for A-B pairs.
-        print 'Reading hits data for %s.'%a_star
+        # Selecting only the targets in the A-list
 
-#         A_table = make_table('',init=True)
-#         B_table = make_table('',init=True)
-        A_table_list = []
-        B_table_list = []
+        #Selecting all the targets from the B list
+        df_targets_blist = df_single_run[~df_single_run['Source Name'].isin(a_list_master)]
+        df_targets_clist =  df_single_run[df_single_run['Source Name'].str.contains('_OFF',na=False)]
+        df_targets_blist = pd.concat([df_targets_blist,df_targets_clist])
+        else_list = df_targets_blist['Source Name'].unique()
 
-        for a_time in list_a_star_times:
+        #Selecting all the good targets from the A list
+        df_targets_alist = df_single_run[~df_single_run['Source Name'].isin(else_list)]
 
-            df_tmp = df_single_run[(df_single_run['Time stamp of first sample (MJD)'] > float(a_time)-0.1) & (df_single_run['Time stamp of first sample (MJD)'] < float(a_time)+0.1)]
-            df_tmp['delta_t'] = df_tmp['Time stamp of first sample (MJD)'].apply(lambda x: float(x) - float(a_time))
+        #---------------------------
+        #Group the df_targets and look for the ones observed 3 times or more
+        df_targets = df_targets_alist.groupby('Source Name').count()['file'] > 2
+        df_bool_list = df_targets.tolist()
+        list_completed = list(df_targets[df_bool_list].index.values)
 
-            #---------------------------
-            #Finding the A-B star pairs.
+        #---------------------------
+        #Selecting targets with a complete set of observations
+        df_targets_alist = df_targets_alist[df_targets_alist['Source Name'].isin(list_completed)]
+        alist_completed_unique = list(df_targets_alist['Source Name'].unique())
 
-            jj = df_tmp[df_tmp['delta_t']>=0]['delta_t'].idxmin()   #Find A star index
+        a_list += alist_completed_unique
+        #---------------------------
+        #Looping over the A stars
 
-            if not os.path.isfile(project_dir+'all_hits/'+df_tmp['filename_dat'][jj]):
-                print 'WARNING: missing file: %s'%(str(df_tmp['filename_dat'][jj]))
-                continue
+        for a_star in alist_completed_unique:
+            kk = 1
 
-            Ai_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][jj])
-            Ai_table['status'] = 'A%i_table'%kk
-
-            try:
-                ii = df_tmp[df_tmp['delta_t']>0.001]['delta_t'].idxmin()   #Find B star index  #.001 = 1.44 min
-
-                if not os.path.isfile(project_dir+'all_hits/'+df_tmp['filename_dat'][ii]):
-                    print 'WARNING: missing file: %s'%(str(df_tmp['filename_dat'][ii]))
-
-                Bi_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][ii])
-                Bi_table['status'] = 'B%i_table'%kk
-
-            except:
-                Bi_table=make_table('',init=True)
-
-#             if kk == 1:
-#                 A1_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][jj])
-#                 A1_table['status'] = 'A1_table'
+            df_a_star = df_targets_alist[df_targets_alist['Source Name'] == a_star]
+            list_a_star_times = df_a_star['Time stamp of first sample (MJD)'].unique()
 
             #---------------------------
-            #Grouping all hits per obs set.
-#             A_table = pd.concat([A_table,Ai_table])
-#             B_table = pd.concat([B_table,Bi_table])
-            A_table_list.append(Ai_table)
-            B_table_list.append(Bi_table)
+            # Reading hits data for A-B pairs.
+            print 'Reading hits data for %s.'%a_star
 
-            kk+=1
+    #         A_table = make_table('',init=True)
+    #         B_table = make_table('',init=True)
+            A_table_list = []
+            B_table_list = []
 
-        #Concatenating
-        A_table = pd.concat(A_table_list)
-        B_table = pd.concat(B_table_list)
+            for a_time in list_a_star_times:
 
-        print 'Finding all candidates for this A-B set.'
-        AAA_table = find_candidates(A_table_list[0],A_table,B_table)
+                df_tmp = df_single_run[(df_single_run['Time stamp of first sample (MJD)'] > float(a_time)-0.1) & (df_single_run['Time stamp of first sample (MJD)'] < float(a_time)+0.1)]
+                df_tmp['delta_t'] = df_tmp['Time stamp of first sample (MJD)'].apply(lambda x: float(x) - float(a_time))
 
-        if len(AAA_table) > 0:
-            print 'Found: %2.2f'%(len(AAA_table)/3.)
+                #---------------------------
+                #Finding the A-B star pairs.
 
-        AAA_candidates_list.append(AAA_table)
-#        print 'Now the total is: %2.2f'%(sum([len(aa) for aa in AAA_candidates_list])/3.)
-        print '------   o   -------'
-        stop
+                jj = df_tmp[df_tmp['delta_t']>=0]['delta_t'].idxmin()   #Find A star index
 
-#Concatenating all the candidates.
-AAA_candidates = pd.concat(AAA_candidates_list,ignore_index=True)
+                if not os.path.isfile(project_dir+'all_hits/'+df_tmp['filename_dat'][jj]):
+                    print 'WARNING: missing file: %s'%(str(df_tmp['filename_dat'][jj]))
+                    continue
 
-t1 = time.time()
-print 'Search time: %5.2f min' % ((t1-t0)/60.)
-
-
-stop
+                Ai_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][jj])
+                Ai_table['status'] = 'A%i_table'%kk
+                #Info from df.
+                Ai_table['filename_fil'] = df_tmp['file'][jj]
+                Ai_table['obs_run'] = df_tmp['obs_run'][jj]
 
 
-#Looking at some stats.
-plt.ion()
-plt.figure()
-AAA_candidates['Freq'].plot.hist(bins=100,logy=True)
+                try:
+                    ii = df_tmp[df_tmp['delta_t']>0.001]['delta_t'].idxmin()   #Find B star index  #.001 = 1.44 min
 
-plt.figure()
-AAA_candidates['DriftRate'].plot.hist(bins=50)
+                    if not os.path.isfile(project_dir+'all_hits/'+df_tmp['filename_dat'][ii]):
+                        print 'WARNING: missing file: %s'%(str(df_tmp['filename_dat'][ii]))
+
+                    Bi_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][ii])
+                    Bi_table['status'] = 'B%i_table'%kk
+
+                    #Info from df.
+                    Bi_table['filename_fil'] = df_tmp['file'][ii]
+                    Bi_table['obs_run'] = df_tmp['obs_run'][ii]
 
 
+                except:
+                    Bi_table=make_table('',init=True)
+
+    #             if kk == 1:
+    #                 A1_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][jj])
+    #                 A1_table['status'] = 'A1_table'
+
+                #---------------------------
+                #Grouping all hits per obs set.
+    #             A_table = pd.concat([A_table,Ai_table])
+    #             B_table = pd.concat([B_table,Bi_table])
+                A_table_list.append(Ai_table)
+                B_table_list.append(Bi_table)
+
+                kk+=1
+
+            #Concatenating
+            A_table = pd.concat(A_table_list)
+            B_table = pd.concat(B_table_list)
+
+            print 'Finding all candidates for this A-B set.'
+            AAA_table = find_candidates(A_table_list[0],A_table,B_table)
+
+            #EE Need to keep some info from the df ('file','obs_run','')
+
+            if len(AAA_table) > 0:
+                print 'Found: %2.2f'%(len(AAA_table)/3.)
+
+            AAA_candidates_list.append(AAA_table)
+            print '------   o   -------'
+
+    #Concatenating all the candidates.
+    AAA_candidates = pd.concat(AAA_candidates_list,ignore_index=True)
+
+    #Save hits.
+    AAA_candidates.to_csv('AAA_candidates.v2_%.1f.csv'%time.time())
+
+    #Removing a bunch of RFI regions (GPS and so on).
+    AAA_candidates = remomve_RFI_regions(AAA_candidates)
+
+
+    t1 = time.time()
+    print 'Search time: %5.2f min' % ((t1-t0)/60.)
+
+
+    stop
+
+
+    #Looking at some stats.
+    plt.ion()
+    plt.figure()
+    AAA_candidates['Freq'].plot.hist(bins=100,logy=True)
+
+    plt.figure()
+    AAA_candidates['DriftRate'].plot.hist(bins=50)
 
 
 #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
