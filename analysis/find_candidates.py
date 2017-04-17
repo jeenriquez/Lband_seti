@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import pandas as pd
 import socket
 import pdb;# pdb.set_trace()
@@ -9,6 +8,45 @@ import os
 import matplotlib.pylab as plt
 
 pd.options.mode.chained_assignment = None  # To remove pandas warnings: default='warn'
+
+
+#------
+#Hardcoded values
+MAX_DRIFT_RATE = 2.0
+OBS_LENGHT = 300.
+#------
+
+
+def make_waterfall_plots(filenames_list,f_start,f_stop,vmin=None, vmax=None):
+    ''' Makes waterfall plots per group of ON-OFF pairs (up to 6 plots.)
+    '''
+
+    n_plots = len(filenames_list)
+    plt.figure("waterfalls", figsize=(10, 2*n_plots))
+
+    f = plt.subplots(n_plots, sharex=True, sharey=True)
+
+    for i,filename in enumerate(filenames_list):
+        print filename
+
+        plt.subplot(n_plots,1,i+1)
+
+        fil = Filterbank(filenames_list[0], f_start=f_start, f_stop=f_stop)
+        fil.plot_waterfall(f_start=f_start, f_stop=f_stop)
+
+        plt.title('')
+
+    #Some plot formatting.
+    ax = plt.gca()
+    ax.get_xaxis().get_major_formatter().set_useOffset(False)
+    plt.xticks(np.arange(f_start, f_stop, (f_stop-f_start)/4.))
+
+    # Fine-tune figure; make subplots close to each other and hide x ticks for
+    # all but bottom plot.
+    plt.subplots_adjust(hspace=0,wspace=0)
+    plt.show()
+
+    plt.savefig(filenames_list[0].replace('.fil','.png'))
 
 def make_table(filename,init=False):
     '''
@@ -73,37 +111,87 @@ def make_table(filename,init=False):
 
     return df_data
 
-def find_candidates(A1_table,A_table,B_table):
+def calc_freq_range(hit,delta_t=0,max_dr=True,follow=False):
+    '''Calculates the range of frequencies given a freq and drift_rate.
+    '''
+
+    if max_dr:
+        drift_rate = MAX_DRIFT_RATE
+    else:
+        drift_rate = hit['DriftRate']
+
+    if follow:
+        freq = hit['Freq'] + drift_rate*(delta_t)/1000.
+        delta_t = 2*OBS_LENGHT  # NOTE: I'm doing twice the amount. To widen the range a bit. Still it is dependend on hit['DriftRate']
+    else:
+        freq = hit['Freq']
+        delta_t = delta_t+OBS_LENGHT  #adding to the end of the obs.
+
+    low_bound  = freq - abs(drift_rate)*delta_t/1000.
+    high_bound = freq + abs(drift_rate)*delta_t/1000.
+
+    return [low_bound,high_bound]
+
+def follow_candidate(hit,A_table,get_count=True):
+    ''' Follows hit to another obs, and finds if antithing there.
+    '''
+
+    freq_range = calc_freq_range(hit,delta_t=A_table['delta_t'].values[0],max_dr=False,follow=True)
+    new_A_table = A_table[(A_table['Freq']>freq_range[0]) & (A_table['Freq']<freq_range[1])]
+
+    if get_count:
+        n_hits_in_range = len(new_A_table)
+
+        #Avoiding cases where multiple hits in one obs, and none in the other.
+        if n_hits_in_range:
+            return 1
+        else:
+            return 0
+
+    else:
+        return new_A_table
+
+def find_candidates(A_table_list,B_table):
     '''Rejects hits based on some logic.
     '''
 
+#     A1_table = A_table_list[0]
+#     A2_table = A_table_list[1]
+#     A3_table = A_table_list[2]
+    A_table = pd.concat(A_table_list)
+
     #Removing hits outside the edges: 1100-1900 MHz.
-    A1_table = A1_table[((A1_table['Freq']>1100.) & (A1_table['Freq']<1900.))]
+    A_table = A_table[((A_table['Freq']>1100.) & (A_table['Freq']<1900.))]
 
     #Removing hits within Notch Filter:  1.2-1.34 GHz
-    A1_table = A1_table[~((A1_table['Freq']>1200.) & (A1_table['Freq']<1340.))]
+    A_table = A_table[~((A_table['Freq']>1200.) & (A_table['Freq']<1340.))]
+
+
 
     #Removing non-drift signals
-    And0_table = A1_table[A1_table['DriftRate'] != 0.0]
+#     A1nd0_table = A1_table[A1_table['DriftRate'] != 0.0]
+#     A2nd0_table = A2_table[A2_table['DriftRate'] != 0.0]
+#     A3nd0_table = A3_table[A3_table['DriftRate'] != 0.0]
+    And0_table = A_table[A_table['DriftRate'] != 0.0]
 
     #Make the SNR>25 cut.
-    As25_table = And0_table[And0_table['SNR']> 25.]
+    As25_table = A1nd0_table[A1nd0_table['SNR']> 25.]
 
-    ## Removing hits that show at the exact Freq than in B.
-    # AA_table = As25_table[~As25_table['Freq'].isin(B_table['Freq'])]
-
+    # Finding RFI within a freq range.
     if len(As25_table) > 0:
-        # Finding RFI within a freq range.
-        As25_table['RFI_in_range'] = As25_table.apply(lambda x: len(B_table[((B_table['Freq']>x['FreqStart']) & (B_table['Freq']<x['FreqEnd']))]),axis=1)
+        As25_table['RFI_in_range'] = As25_table.apply(lambda hit: len(B_table[((B_table['Freq'] > calc_freq_range(hit)[0]) & (B_table['Freq'] < calc_freq_range(hit)[1]))]),axis=1)
         AnB_table = As25_table[As25_table['RFI_in_range'] == 0]
     else:
         print 'NOTE: Found no candidates.'
         return As25_table
 
+    #Find the ones that are present in all the 3 ON obs, and follow the drifted signal.
     if len(AnB_table) > 0:
-        #Find the ones that are present in all the 3 ON obs.
-        AnB_table['ON_in_range'] = AnB_table.apply(lambda x: len(A_table[((A_table['Freq']>x['FreqStart']) & (A_table['Freq']<x['FreqEnd']))]),axis=1)
-        AA_table = AnB_table[AnB_table['ON_in_range'] > 2]
+        A1nB_table = AnB_table[AnB_table['status'] == 'A1_table']
+        A2nB_table = AnB_table[AnB_table['status'] == 'A2_table']
+        A3nB_table = AnB_table[AnB_table['status'] == 'A3_table']
+        A1nB_table['ON_in_range'] = A1nB_table.apply(lambda hit: follow_candidate(hit,A2nB_table) + follow_candidate(hit,A3nB_table) ,axis=1)
+        AA_table = A1nB_table[A1nB_table['ON_in_range'] == 2]
     else:
         print 'NOTE: Found no candidates.'
         return AnB_table
@@ -111,11 +199,18 @@ def find_candidates(A1_table,A_table,B_table):
     if len(AA_table) > 0:
         AAA_table_list = []
 
-        for row_index, row in AA_table.iterrows():
-            Ai_table = A_table[((A_table['Freq']>row['FreqStart']) & (A_table['Freq']<row['FreqEnd']))]
-            Ai_table['Hit_ID'] = row['Source']+'_'+str(row_index)
-            AAA_table_list.append(Ai_table)
+        for hit_index, hit in AA_table.iterrows():
+            A1i_table = follow_candidate(hit,A1nB_table,get_count=False)
+            A1i_table['Hit_ID'] = hit['Source']+'_'+str(hit_index)
+            A2i_table = follow_candidate(hit,A2nB_table,get_count=False)
+            A2i_table['Hit_ID'] = hit['Source']+'_'+str(hit_index)
+            A3i_table = follow_candidate(hit,A3nB_table,get_count=False)
+            A3i_table['Hit_ID'] = hit['Source']+'_'+str(hit_index)
+
+            AAA_table_list += [A1i_table, A2i_table, A3i_table]
+
         AAA_table = pd.concat(AAA_table_list)
+#        pdb.set_trace()
     else:
         print 'NOTE: Found no candidates.'
         return AA_table
@@ -123,44 +218,51 @@ def find_candidates(A1_table,A_table,B_table):
 
     return AAA_table
 
-
 def remomve_RFI_regions(AAA_candidates):
     ''' Removing regions with lots of known RFI.
     '''
 
     #Removing corrupt files.
 #    AAA_HIP69357 = AAA_candidates[AAA_candidates['Source']=='HIP69357']   # Want to look at the waterfall plots. Very strange behavior.
-    AAA_candidates = AAA_candidates[AAA_candidates['Source']!='HIP69357']
+#    AAA_candidates = AAA_candidates[AAA_candidates['Source']!='HIP69357']
 
     #Removing Hydrogen line
 #    Hydrogen_candidates = AAA_candidates[((AAA_candidates['Freq'] > 1420.) & (AAA_candidates['Freq'] < 1421.))]   # Could plot RA-DEC, and see distribution (maybe galactic plane??).
-    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1420.) & (AAA_candidates['Freq'] < 1421.))]
+#    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1420.) & (AAA_candidates['Freq'] < 1421.))]
 
     #Removing Iridium signal.
 #    AAA_Iridium = AAA_candidates[~((AAA_candidates['Freq'] > 1626.) & (AAA_candidates['Freq'] < 1626.5))]
-    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1626.) & (AAA_candidates['Freq'] < 1626.5))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1615.) & (AAA_candidates['Freq'] < 1626.5))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1610.) & (AAA_candidates['Freq'] < 1628))]   #http://www.cv.nrao.edu/vla/upgrade/node114.html
+
     #Removing GOES signal
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1675.8) & (AAA_candidates['Freq'] < 1676.2))]
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1685.) & (AAA_candidates['Freq'] < 1686.))]#https://goes.gsfc.nasa.gov/text/goestechnotes.html
 
     #Removing bright GPS regions. http://www.gps.gov/systems/gps/modernization/civilsignals/
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1376.) & (AAA_candidates['Freq'] < 1386.))]
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1570.) & (AAA_candidates['Freq'] < 1580.))]
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1595.) & (AAA_candidates['Freq'] < 1610.))]
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1163.5) & (AAA_candidates['Freq'] < 1188.5 ))]  #L5 #https://www.rfglobalnet.com/doc/1176-mhz-gps-l5-band-ceramic-notch-filter-0001
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1374.) & (AAA_candidates['Freq'] < 1376.))] #https://www.naic.edu/~phil/rfi/1375_rfi_nov09.html
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1544.) & (AAA_candidates['Freq'] < 1545.))]  #Galileo SAR Downlink
+
 
     #Mobile-satellite communications.
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1555.) & (AAA_candidates['Freq'] < 1559.))]
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1656.5) & (AAA_candidates['Freq'] < 1660.5))]
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1545.) & (AAA_candidates['Freq'] < 1547.))] #Alphasat 1545.5MHz + Inmarsat Aero
+    AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1626.5) & (AAA_candidates['Freq'] < 1660.5))]  #TowardsthePersonalCommunicationsEnvironment
 
     #removing from    1520-1560?
+
+    #http://www.infineon.com/dgdl/Infineon-AN420_BGA524N6-AN-v01_00-EN.pdf?fileId=5546d462518ffd8501520ce7a08570fc
+    #http://www.navipedia.net/index.php/File:GNSS_All_Signals.png
 
     #NOAA 17,18	1707 MHz	1700-1710 MHz	Meteorological-satellite service
     AAA_candidates = AAA_candidates[~((AAA_candidates['Freq'] > 1700.) & (AAA_candidates['Freq'] < 1710.))]
 
-
     return AAA_candidates
-
 
 if __name__ == "__main__":
 
@@ -242,7 +344,6 @@ if __name__ == "__main__":
     #df['filename_dat'] = df.apply(lambda x: 'spliced'+x['file'].split('/spliced')[-1].replace('.fil','.h5'))
     df['filename_dat'] = ['spliced'+df['file'][ii].split('/spliced')[-1].replace('.fil','.dat') for ii in df.index]
 
-    #
     # #---------------------------
     # # Selecting only the targets in the A-list
     #
@@ -285,6 +386,7 @@ if __name__ == "__main__":
     #Looping over observing run.
 
     AAA_candidates_list = []
+    all_candidates_list = []
     AAA_candidates = make_table('',init=True)
     obs_runs = df['obs_run'].unique()
     a_list = []
@@ -337,30 +439,36 @@ if __name__ == "__main__":
 
             for a_time in list_a_star_times:
 
+                #This delta_t is to find the closes observation to the current (basically to find the OFF).
                 df_tmp = df_single_run[(df_single_run['Time stamp of first sample (MJD)'] > float(a_time)-0.1) & (df_single_run['Time stamp of first sample (MJD)'] < float(a_time)+0.1)]
-                df_tmp['delta_t'] = df_tmp['Time stamp of first sample (MJD)'].apply(lambda x: float(x) - float(a_time))
+                df_tmp['delta_t_off'] = df_tmp['Time stamp of first sample (MJD)'].apply(lambda x: float(x) - float(a_time))
 
                 #---------------------------
                 #Finding the A-B star pairs.
 
-                jj = df_tmp[df_tmp['delta_t']>=0]['delta_t'].idxmin()   #Find A star index
+                jj = df_tmp[df_tmp['delta_t_off']>=0]['delta_t_off'].idxmin()   #Find A star's index
 
                 if not os.path.isfile(project_dir+'all_hits/'+df_tmp['filename_dat'][jj]):
-                    print 'WARNING: missing file: %s'%(str(df_tmp['filename_dat'][jj]))
-                    continue
+                    print 'WARNING: missing ON file: %s'%(str(df_tmp['filename_dat'][jj]))
 
                 Ai_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][jj])
                 Ai_table['status'] = 'A%i_table'%kk
                 #Info from df.
                 Ai_table['filename_fil'] = df_tmp['file'][jj]
                 Ai_table['obs_run'] = df_tmp['obs_run'][jj]
-
+                Ai_table['delta_t'] = (a_time-list_a_star_times[0])*3600*24  # In sec
 
                 try:
-                    ii = df_tmp[df_tmp['delta_t']>0.001]['delta_t'].idxmin()   #Find B star index  #.001 = 1.44 min
+                    ii = df_tmp[df_tmp['delta_t_off']>0.001]['delta_t_off'].idxmin()   #Find B star's index  #.001 = 1.44 min
+
+                    b_name = df_tmp['Source Name'][ii]
+
+                    if a_star == b_name:
+                        print 'WARNING: Skiping (a=b). ', a_star
+                        raise ValueError('WARNING: Skiping (a=b). ', a_star)
 
                     if not os.path.isfile(project_dir+'all_hits/'+df_tmp['filename_dat'][ii]):
-                        print 'WARNING: missing file: %s'%(str(df_tmp['filename_dat'][ii]))
+                        print 'WARNING: missing OFF file: %s'%(str(df_tmp['filename_dat'][ii]))
 
                     Bi_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][ii])
                     Bi_table['status'] = 'B%i_table'%kk
@@ -369,18 +477,11 @@ if __name__ == "__main__":
                     Bi_table['filename_fil'] = df_tmp['file'][ii]
                     Bi_table['obs_run'] = df_tmp['obs_run'][ii]
 
-
                 except:
                     Bi_table=make_table('',init=True)
 
-    #             if kk == 1:
-    #                 A1_table=make_table(project_dir+'all_hits/'+df_tmp['filename_dat'][jj])
-    #                 A1_table['status'] = 'A1_table'
-
                 #---------------------------
                 #Grouping all hits per obs set.
-    #             A_table = pd.concat([A_table,Ai_table])
-    #             B_table = pd.concat([B_table,Bi_table])
                 A_table_list.append(Ai_table)
                 B_table_list.append(Bi_table)
 
@@ -390,22 +491,34 @@ if __name__ == "__main__":
             A_table = pd.concat(A_table_list)
             B_table = pd.concat(B_table_list)
 
-            print 'Finding all candidates for this A-B set.'
-            AAA_table = find_candidates(A_table_list[0],A_table,B_table)
+            #To save all the hits. Uncomment these 3 lines.
+#             all_candidates_list.append(A_table)  This blows up the mem. Caution.
+#             all_candidates_list.append(B_table)
+#            continue
 
-            #EE Need to keep some info from the df ('file','obs_run','')
+            print 'Finding all candidates for this A-B set.'
+#             AAA_table = find_candidates(A_table_list[0],A_table,B_table)
+            AAA_table = find_candidates(A_table_list,B_table)
 
             if len(AAA_table) > 0:
                 print 'Found: %2.2f'%(len(AAA_table)/3.)
 
+#             if a_star == 'HIP33955':
+#                 pdb.set_trace()
+
             AAA_candidates_list.append(AAA_table)
             print '------   o   -------'
 
+
+    stop
+
+
     #Concatenating all the candidates.
     AAA_candidates = pd.concat(AAA_candidates_list,ignore_index=True)
+    AAA_candidates_list = 0.
 
     #Save hits.
-    AAA_candidates.to_csv('AAA_candidates.v2_%.1f.csv'%time.time())
+    AAA_candidates.to_csv('AAA_candidates.v4_%.0f.csv'%time.time())
 
     #Removing a bunch of RFI regions (GPS and so on).
     AAA_candidates = remomve_RFI_regions(AAA_candidates)
