@@ -36,7 +36,7 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,vmin=None, vm
         plt.subplot(n_plots,1,i+1)
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
-        fil.plot_waterfall(f_start=f_start, f_stop=f_stop)
+        fil.plot_waterfall(f_start=f_start, f_stop=f_stop,vmin=vmin, vmax=vmax)
 
         plt.ylabel('Time [s]')
         plt.title('')
