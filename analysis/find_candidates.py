@@ -28,7 +28,7 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,vmin=None, vm
         plt.ion()
 
     n_plots = len(filenames_list)
-    f = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
+    plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
 
     for i,filename in enumerate(filenames_list):
         print filename
@@ -38,6 +38,7 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,vmin=None, vm
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
         fil.plot_waterfall(f_start=f_start, f_stop=f_stop)
 
+        plt.ylabel('Time [s]')
         plt.title('')
 
     #Some plot formatting.
@@ -48,7 +49,8 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,vmin=None, vm
     # Fine-tune figure; make subplots close to each other and hide x ticks for
     # all but bottom plot.
     plt.subplots_adjust(hspace=0,wspace=0)
-    plt.show()
+    if not ion:
+        plt.show()
 
     plt.savefig('Candidate_waterfall_plots.v1.png')
 
