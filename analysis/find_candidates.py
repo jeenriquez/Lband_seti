@@ -31,23 +31,17 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=True,
     """
     plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
 
-    if logged:
-        plot_data = db(plot_data)
-
-    # Make sure waterfall plot is under 4k*4k
-    dec_fac_x, dec_fac_y = 1, 1
-    if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
-        dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
-
-    if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
-        dec_fac_y =  plot_data.shape[1] /  MAX_IMSHOW_POINTS[1]
-
-#        plot_data = rebin(plot_data, dec_fac_x, dec_fac_y)
-
-    try:
-        plt.title(fil.header['source_name'])
-    except KeyError:
-        plt.title(fil.filename)
+#
+#     # Make sure waterfall plot is under 4k*4k
+#     dec_fac_x, dec_fac_y = 1, 1
+#     if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
+#         dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
+#
+#     if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
+#         dec_fac_y =  plot_data.shape[1] /  MAX_IMSHOW_POINTS[1]
+#
+# #        plot_data = rebin(plot_data, dec_fac_x, dec_fac_y)
+#
 
     if MJD_time:
         extent=(plot_f[0], plot_f[-1], fil.timestamps[-1], fil.timestamps[0])
