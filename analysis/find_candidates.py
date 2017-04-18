@@ -19,56 +19,56 @@ OBS_LENGHT = 300.
 #------
 
 
-    def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=True,MJD_time=False, **kwargs):
-        """ Plot waterfall of data
+def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=True,MJD_time=False, **kwargs):
+    """ Plot waterfall of data
 
-        Args:
-            f_start (float): start frequency, in MHz
-            f_stop (float): stop frequency, in MHz
-            logged (bool): Plot in linear (False) or dB units (True),
-            cb (bool): for plotting the colorbar
-            kwargs: keyword args to be passed to matplotlib imshow()
-        """
-        plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
+    Args:
+        f_start (float): start frequency, in MHz
+        f_stop (float): stop frequency, in MHz
+        logged (bool): Plot in linear (False) or dB units (True),
+        cb (bool): for plotting the colorbar
+        kwargs: keyword args to be passed to matplotlib imshow()
+    """
+    plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
 
-        if logged:
-            plot_data = db(plot_data)
+    if logged:
+        plot_data = db(plot_data)
 
-        # Make sure waterfall plot is under 4k*4k
-        dec_fac_x, dec_fac_y = 1, 1
-        if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
-            dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
+    # Make sure waterfall plot is under 4k*4k
+    dec_fac_x, dec_fac_y = 1, 1
+    if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
+        dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
 
-        if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
-            dec_fac_y =  plot_data.shape[1] /  MAX_IMSHOW_POINTS[1]
+    if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
+        dec_fac_y =  plot_data.shape[1] /  MAX_IMSHOW_POINTS[1]
 
 #        plot_data = rebin(plot_data, dec_fac_x, dec_fac_y)
 
-        try:
-            plt.title(fil.header['source_name'])
-        except KeyError:
-            plt.title(fil.filename)
+    try:
+        plt.title(fil.header['source_name'])
+    except KeyError:
+        plt.title(fil.filename)
 
-        if MJD_time:
-            extent=(plot_f[0], plot_f[-1], fil.timestamps[-1], fil.timestamps[0])
-        else:
-            extent=(plot_f[0], plot_f[-1], (fil.timestamps[-1]-fil.timestamps[0])*24.*60.*60, 0.0)
+    if MJD_time:
+        extent=(plot_f[0], plot_f[-1], fil.timestamps[-1], fil.timestamps[0])
+    else:
+        extent=(plot_f[0], plot_f[-1], (fil.timestamps[-1]-fil.timestamps[0])*24.*60.*60, 0.0)
 
-        plt.imshow(plot_data,
-            aspect='auto',
-            rasterized=True,
-            interpolation='nearest',
-            extent=extent,
-            cmap='viridis',
-            **kwargs
-        )
-        if cb:
-            plt.colorbar()
-        plt.xlabel("Frequency [MHz]")
-        if MJD_time:
-            plt.ylabel("Time [MJD]")
-        else:
-            plt.ylabel("Time [s]")
+    plt.imshow(plot_data,
+        aspect='auto',
+        rasterized=True,
+        interpolation='nearest',
+        extent=extent,
+        cmap='viridis',
+        **kwargs
+    )
+    if cb:
+        plt.colorbar()
+    plt.xlabel("Frequency [MHz]")
+    if MJD_time:
+        plt.ylabel("Time [MJD]")
+    else:
+        plt.ylabel("Time [s]")
 
 
 
@@ -594,16 +594,10 @@ if __name__ == "__main__":
     plt.figure()
     AAA_candidates['DriftRate'].plot.hist(bins=50)
 
+    stop
 
 
 
     #Removing a bunch of RFI regions (GPS and so on).
     AAA_candidates = remomve_RFI_regions(AAA_candidates)
-
-
-
-
-    stop
-
-    'filename_fil'
 
