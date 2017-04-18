@@ -1,15 +1,20 @@
+#!/usr/bin/env python
+'''
+    Simple script for quicly making an h5 file from a .fil.
+
+    ..author: Emilio Enriquez (jeenriquez@gmail.com)
+'''
+
 from blimpy import Waterfall
 from optparse import OptionParser
 import sys
-
-import pdb;# pdb.set_trace()
 
 def make_h5_file():
     ''' Converts file to h5 format. Saves output in current dir.
     '''
 
     p = OptionParser()
-    p.set_usage('python fil25.py <FULL_PATH_TO_FIL_FILE> [options]')
+    p.set_usage('python fil2h5.py <FULL_PATH_TO_FIL_FILE> [options]')
     p.add_option('-o', '--out_dir', dest='out_dir', type='str', default='./', help='Location for output files. Default: local dir. ')
     opts, args = p.parse_args(sys.argv[1:])
 
