@@ -7,6 +7,7 @@ import time
 import os
 import matplotlib.pylab as plt
 from blimpy import Filterbank
+import numpy as np
 
 pd.options.mode.chained_assignment = None  # To remove pandas warnings: default='warn'
 
@@ -22,7 +23,7 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,vmin=None, vmax=None):
     ''' Makes waterfall plots per group of ON-OFF pairs (up to 6 plots.)
     '''
 
-#filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
+    #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
 
     n_plots = len(filenames_list)
     plt.figure("waterfalls", figsize=(10, 2*n_plots))
