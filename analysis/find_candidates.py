@@ -19,7 +19,60 @@ OBS_LENGHT = 300.
 #------
 
 
-def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,vmin=None, vmax=None):
+    def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=True,MJD_time=False, **kwargs):
+        """ Plot waterfall of data
+
+        Args:
+            f_start (float): start frequency, in MHz
+            f_stop (float): stop frequency, in MHz
+            logged (bool): Plot in linear (False) or dB units (True),
+            cb (bool): for plotting the colorbar
+            kwargs: keyword args to be passed to matplotlib imshow()
+        """
+        plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
+
+        if logged:
+            plot_data = db(plot_data)
+
+        # Make sure waterfall plot is under 4k*4k
+        dec_fac_x, dec_fac_y = 1, 1
+        if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
+            dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
+
+        if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
+            dec_fac_y =  plot_data.shape[1] /  MAX_IMSHOW_POINTS[1]
+
+#        plot_data = rebin(plot_data, dec_fac_x, dec_fac_y)
+
+        try:
+            plt.title(fil.header['source_name'])
+        except KeyError:
+            plt.title(fil.filename)
+
+        if MJD_time:
+            extent=(plot_f[0], plot_f[-1], fil.timestamps[-1], fil.timestamps[0])
+        else:
+            extent=(plot_f[0], plot_f[-1], (fil.timestamps[-1]-fil.timestamps[0])*24.*60.*60, 0.0)
+
+        plt.imshow(plot_data,
+            aspect='auto',
+            rasterized=True,
+            interpolation='nearest',
+            extent=extent,
+            cmap='viridis',
+            **kwargs
+        )
+        if cb:
+            plt.colorbar()
+        plt.xlabel("Frequency [MHz]")
+        if MJD_time:
+            plt.ylabel("Time [MJD]")
+        else:
+            plt.ylabel("Time [s]")
+
+
+
+def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,**kwargs):
     ''' Makes waterfall plots per group of ON-OFF pairs (up to 6 plots.)
     '''
     #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
@@ -30,13 +83,15 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,vmin=None, vm
     n_plots = len(filenames_list)
     plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
 
+
+
     for i,filename in enumerate(filenames_list):
         print filename
 
         plt.subplot(n_plots,1,i+1)
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
-        fil.plot_waterfall(f_start=f_start, f_stop=f_stop,vmin=vmin, vmax=vmax)
+        plot_waterfall(fil,f_start=f_start, f_stop=f_stop,**kwargs)
 
         plt.ylabel('Time [s]')
         plt.title('')
