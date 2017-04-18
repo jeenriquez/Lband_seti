@@ -21,6 +21,8 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,vmin=None, vmax=None):
     ''' Makes waterfall plots per group of ON-OFF pairs (up to 6 plots.)
     '''
 
+#filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
+
     n_plots = len(filenames_list)
     plt.figure("waterfalls", figsize=(10, 2*n_plots))
 
@@ -147,7 +149,6 @@ def follow_candidate(hit,A_table,get_count=True):
             return 1
         else:
             return 0
-
     else:
         return new_A_table
 
@@ -166,8 +167,6 @@ def find_candidates(A_table_list,B_table):
     #Removing hits within Notch Filter:  1.2-1.34 GHz
     A_table = A_table[~((A_table['Freq']>1200.) & (A_table['Freq']<1340.))]
 
-
-
     #Removing non-drift signals
 #     A1nd0_table = A1_table[A1_table['DriftRate'] != 0.0]
 #     A2nd0_table = A2_table[A2_table['DriftRate'] != 0.0]
@@ -175,7 +174,7 @@ def find_candidates(A_table_list,B_table):
     And0_table = A_table[A_table['DriftRate'] != 0.0]
 
     #Make the SNR>25 cut.
-    As25_table = A1nd0_table[A1nd0_table['SNR']> 25.]
+    As25_table = And0_table[And0_table['SNR']> 25.]
 
     # Finding RFI within a freq range.
     if len(As25_table) > 0:
@@ -186,15 +185,20 @@ def find_candidates(A_table_list,B_table):
         return As25_table
 
     #Find the ones that are present in all the 3 ON obs, and follow the drifted signal.
-    if len(AnB_table) > 0:
+    if len(AnB_table) > 2:
         A1nB_table = AnB_table[AnB_table['status'] == 'A1_table']
         A2nB_table = AnB_table[AnB_table['status'] == 'A2_table']
         A3nB_table = AnB_table[AnB_table['status'] == 'A3_table']
-        A1nB_table['ON_in_range'] = A1nB_table.apply(lambda hit: follow_candidate(hit,A2nB_table) + follow_candidate(hit,A3nB_table) ,axis=1)
-        AA_table = A1nB_table[A1nB_table['ON_in_range'] == 2]
+        if len(A1nB_table) > 0  and len(A2nB_table) > 0 and len(A3nB_table) > 0:
+
+            A1nB_table['ON_in_range'] = A1nB_table.apply(lambda hit: follow_candidate(hit,A2nB_table) + follow_candidate(hit,A3nB_table) ,axis=1)
+            AA_table = A1nB_table[A1nB_table['ON_in_range'] == 2]
+        else:
+            print 'NOTE: Found no candidates.'
+            return  make_table('',init=True)
     else:
         print 'NOTE: Found no candidates.'
-        return AnB_table
+        return make_table('',init=True)
 
     if len(AA_table) > 0:
         AAA_table_list = []
@@ -210,7 +214,7 @@ def find_candidates(A_table_list,B_table):
             AAA_table_list += [A1i_table, A2i_table, A3i_table]
 
         AAA_table = pd.concat(AAA_table_list)
-#        pdb.set_trace()
+        pdb.set_trace()
     else:
         print 'NOTE: Found no candidates.'
         return AA_table
@@ -510,8 +514,11 @@ if __name__ == "__main__":
             print '------   o   -------'
 
 
-    stop
 
+    t1 = time.time()
+    print 'Search time: %.2f min' % ((t1-t0)/60.)
+
+    stop
 
     #Concatenating all the candidates.
     AAA_candidates = pd.concat(AAA_candidates_list,ignore_index=True)
@@ -519,17 +526,6 @@ if __name__ == "__main__":
 
     #Save hits.
     AAA_candidates.to_csv('AAA_candidates.v4_%.0f.csv'%time.time())
-
-    #Removing a bunch of RFI regions (GPS and so on).
-    AAA_candidates = remomve_RFI_regions(AAA_candidates)
-
-
-    t1 = time.time()
-    print 'Search time: %5.2f min' % ((t1-t0)/60.)
-
-
-    stop
-
 
     #Looking at some stats.
     plt.ion()
@@ -540,4 +536,15 @@ if __name__ == "__main__":
     AAA_candidates['DriftRate'].plot.hist(bins=50)
 
 
-#filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
+
+
+    #Removing a bunch of RFI regions (GPS and so on).
+    AAA_candidates = remomve_RFI_regions(AAA_candidates)
+
+
+
+
+    stop
+
+    'filename_fil'
+
