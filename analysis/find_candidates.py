@@ -6,6 +6,7 @@ import pdb;# pdb.set_trace()
 import time
 import os
 import matplotlib.pylab as plt
+from blimpy import Filterbank
 
 pd.options.mode.chained_assignment = None  # To remove pandas warnings: default='warn'
 
