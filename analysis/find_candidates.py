@@ -8,6 +8,8 @@ import os
 import matplotlib.pylab as plt
 from blimpy import Filterbank
 import numpy as np
+from blimpy.utils import db, lin, rebin, closest
+
 
 pd.options.mode.chained_assignment = None  # To remove pandas warnings: default='warn'
 
@@ -16,10 +18,16 @@ pd.options.mode.chained_assignment = None  # To remove pandas warnings: default=
 #Hardcoded values
 MAX_DRIFT_RATE = 2.0
 OBS_LENGHT = 300.
+
+MAX_PLT_POINTS      = 65536                  # Max number of points in matplotlib plot
+MAX_IMSHOW_POINTS   = (8192, 4096)           # Max number of points in imshow plot
+MAX_DATA_ARRAY_SIZE = 1024 * 1024 * 1024     # Max size of data array to load into memory
+MAX_HEADER_BLOCKS   = 100                    # Max size of header (in 512-byte blocks)
+
 #------
 
 
-def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=True,MJD_time=False, **kwargs):
+def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False,MJD_time=False, **kwargs):
     """ Plot waterfall of data
 
     Args:
@@ -31,17 +39,16 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=True,
     """
     plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
 
-#
-#     # Make sure waterfall plot is under 4k*4k
-#     dec_fac_x, dec_fac_y = 1, 1
-#     if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
-#         dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
-#
-#     if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
-#         dec_fac_y =  plot_data.shape[1] /  MAX_IMSHOW_POINTS[1]
-#
-# #        plot_data = rebin(plot_data, dec_fac_x, dec_fac_y)
-#
+
+    # Make sure waterfall plot is under 4k*4k
+    dec_fac_x, dec_fac_y = 1, 1
+    if plot_data.shape[0] > MAX_IMSHOW_POINTS[0]:
+        dec_fac_x = plot_data.shape[0] / MAX_IMSHOW_POINTS[0]
+
+    if plot_data.shape[1] > MAX_IMSHOW_POINTS[1]:
+        dec_fac_y =  plot_data.shape[1] /  MAX_IMSHOW_POINTS[1]
+
+    plot_data = rebin(plot_data, dec_fac_x, dec_fac_y)
 
     if MJD_time:
         extent=(plot_f[0], plot_f[-1], fil.timestamps[-1], fil.timestamps[0])
@@ -77,7 +84,14 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,**kwargs):
     n_plots = len(filenames_list)
     plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
 
+    fil = Filterbank(filenames_list[0], f_start=f_start, f_stop=f_stop)
+    plot_waterfall(fil,f_start=f_start, f_stop=f_stop,**kwargs)
 
+    A1_avg = fil.data.mean()
+    A1_max = fil.data.max()
+    A1_std = np.std(fil.data)
+
+    label = ['A','B','A','C','A','D']
 
     for i,filename in enumerate(filenames_list):
         print filename
@@ -85,7 +99,7 @@ def make_waterfall_plots(filenames_list,f_start,f_stop,ion = False,**kwargs):
         plt.subplot(n_plots,1,i+1)
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
-        plot_waterfall(fil,f_start=f_start, f_stop=f_stop,**kwargs)
+        plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
 
         plt.ylabel('Time [s]')
         plt.title('')
