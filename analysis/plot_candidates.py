@@ -54,7 +54,7 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     else:
         extent=(plot_f[0], plot_f[-1], (fil.timestamps[-1]-fil.timestamps[0])*24.*60.*60, 0.0)
 
-    plt.imshow(plot_data,
+    this_plot = plt.imshow(plot_data,
         aspect='auto',
         rasterized=True,
         interpolation='nearest',
@@ -70,6 +70,7 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     else:
         plt.ylabel("Time [s]")
 
+    return this_plot
 
 def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwargs):
     ''' Makes waterfall plots per group of ON-OFF pairs (up to 6 plots.)
@@ -87,8 +88,6 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
 
     fil = Filterbank(filenames_list[0], f_start=f_start, f_stop=f_stop)
-    plot_waterfall(fil,f_start=f_start, f_stop=f_stop,**kwargs)
-
     A1_avg = fil.data.mean()
     A1_max = fil.data.max()
     A1_std = np.std(fil.data)
