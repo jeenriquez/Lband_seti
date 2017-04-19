@@ -84,6 +84,11 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         f_start = 1528.4
         f_stop  = 1528.5
 
+
+    if target == 'HIP7181':
+        f_start -= 0.009
+        f_stop  += 0.009
+
     n_plots = len(filenames_list)
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
 
@@ -92,7 +97,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     A1_max = fil.data.max()
     A1_std = np.std(fil.data)
 
-    label = ['A','B','A','C','A','D']
+    labeling = ['A','B','A','C','A','D']
 
     for i,filename in enumerate(filenames_list):
         print filename
@@ -102,7 +107,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
 
         plt.ylabel('Time [s]')
-        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5.,50 ,label[i],color='w',fontsize=25)
+        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=25)
 
         if i == 0:
             plt.title(target)
@@ -261,8 +266,8 @@ if __name__ == "__main__":
         table_events+='  &  '.join(for_table)+'\ \ \n'
 
     #Making table of events
-    with open('L_band_target_pairs.lst','w') as file_list:
-        file_list.write(list_targets)
+    with open('L_band_top_events.lst','w') as file_list:
+        file_list.write(table_events)
 
     stop
     #Removing a bunch of RFI regions (GPS and so on).
