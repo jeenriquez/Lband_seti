@@ -127,7 +127,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         plt.show()
 
 #    plt.savefig('Candidate_waterfall_plots.'+target+'.png')
-    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=1000)
+    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300)
 
 def get_filenames_lis(target):
 
@@ -232,10 +232,9 @@ def get_filenames_lis(target):
 
 def get_data(filenames_list,target,f_start,f_stop):
 
-        fil = Waterfall(filename, f_start=f_start, f_stop=f_stop)
-
-
-
+        fil_file = Waterfall(filename, f_start=f_start, f_stop=f_stop)
+        new_filename = filename.replace('.fil','.h5').split('/')[-1]
+        fil_file.write_to_hdf5(new_filename)
 
 
 if __name__ == "__main__":
