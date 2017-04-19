@@ -230,11 +230,15 @@ def get_filenames_lis(target):
     return filenames_list
 
 
-def get_data(filenames_list,target,f_start,f_stop):
+def get_data(filenames_list,target,dat_dit,f_start,f_stop):
+    ''' save some data.
+    '''
+
+    for i,filename in enumerate(filenames_list):
 
         fil_file = Waterfall(filename, f_start=f_start, f_stop=f_stop)
         new_filename = filename.replace('.fil','.h5').split('/')[-1]
-        fil_file.write_to_hdf5(new_filename)
+        fil_file.write_to_hdf5(dat_dit+new_filename)
 
 
 if __name__ == "__main__":
@@ -270,7 +274,7 @@ if __name__ == "__main__":
         f_stop = AAA1_single['Freq'].values[-1] + 0.001
         coarse_channel=AAA1_single['CoarseChanNum'].values[-1]
 
-        make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
+        make_waterfall_plots(filenames_list,target,dat_dit,f_start,f_stop,ion=True)
 
         get_data(filenames_list,target,f_start-0.099,f_stop+0.099)
 
