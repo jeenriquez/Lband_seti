@@ -84,7 +84,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         f_stop  = 1528.5
 
     n_plots = len(filenames_list)
-    plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
+    fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
 
     fil = Filterbank(filenames_list[0], f_start=f_start, f_stop=f_stop)
     plot_waterfall(fil,f_start=f_start, f_stop=f_stop,**kwargs)
@@ -100,10 +100,14 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         plt.subplot(n_plots,1,i+1)
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
-        plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
+        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
 
         plt.ylabel('Time [s]')
         plt.title(target)
+
+        if i ==0:
+            cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.8])
+            fig[0].colorbar(this_plot,cax=cax)
 
     #Some plot formatting.
     ax = plt.gca()
