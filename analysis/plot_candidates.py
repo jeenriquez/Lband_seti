@@ -71,7 +71,6 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
         plt.ylabel("Time [s]")
 
 
-
 def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwargs):
     ''' Makes waterfall plots per group of ON-OFF pairs (up to 6 plots.)
     '''
@@ -79,6 +78,10 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
     if ion:
         plt.ion()
+
+    if target ='HIP45493':
+        f_start = 1528.4
+        f_stop  = 1528.5
 
     n_plots = len(filenames_list)
     plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
@@ -94,14 +97,13 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
     for i,filename in enumerate(filenames_list):
         print filename
-
         plt.subplot(n_plots,1,i+1)
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
         plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
 
         plt.ylabel('Time [s]')
-        plt.title('')
+        plt.title(target)
 
     #Some plot formatting.
     ax = plt.gca()
@@ -215,8 +217,6 @@ def get_filenames_lis(target):
         raise ValueError('No known target',target)
 
     return filenames_list
-
-
 
 
 if __name__ == "__main__":
