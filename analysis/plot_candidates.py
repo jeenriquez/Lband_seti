@@ -125,7 +125,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     if not ion:
         plt.show()
 
-    plt.savefig('Candidate_waterfall_plots.'+target+'.png')
+#    plt.savefig('Candidate_waterfall_plots.'+target+'.png')
+    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=1000)
 
 def get_filenames_lis(target):
 
