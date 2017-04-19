@@ -251,8 +251,8 @@ if __name__ == "__main__":
 
         AAA1_single = AAA_single[AAA_single['status'] == 'A1_table'].sort('SNR')
 
-        f_start = AAA1_single['Freq'].values[-1] - 0.1
-        f_stop = AAA1_single['Freq'].values[-1] + 0.1
+        f_start = AAA1_single['Freq'].values[-1] - 0.01
+        f_stop = AAA1_single['Freq'].values[-1] + 0.01
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
