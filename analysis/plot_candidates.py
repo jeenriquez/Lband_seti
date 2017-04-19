@@ -7,6 +7,7 @@ import time
 import os
 import matplotlib.pylab as plt
 from blimpy import Filterbank
+from blimpy import Waterfall
 import numpy as np
 from blimpy.utils import db, lin, rebin, closest
 import find_candidates
@@ -229,6 +230,14 @@ def get_filenames_lis(target):
     return filenames_list
 
 
+def get_data(filenames_list,target,f_start,f_stop):
+
+        fil = Waterfall(filename, f_start=f_start, f_stop=f_stop)
+
+
+
+
+
 if __name__ == "__main__":
     ''' Make it happen moment.
     '''
@@ -260,8 +269,12 @@ if __name__ == "__main__":
 
         f_start = AAA1_single['Freq'].values[-1] - 0.001
         f_stop = AAA1_single['Freq'].values[-1] + 0.001
+        coarse_channel=AAA1_single['CoarseChanNum'].values[-1]
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
+
+        get_data(filenames_list,target,f_start-0.099,f_stop+0.099)
+
 
         for_table = [AAA1_single['Source'].values[0],'%.5f'%AAA1_single['Freq'].values[-1],'%.3f'%AAA1_single['DriftRate'].values[-1],'%.1f'%AAA1_single['SNR'].values[-1]]
         table_events+='  &  '.join(for_table)+'\ \ \n'
