@@ -242,10 +242,10 @@ if __name__ == "__main__":
         dat_dit = '/Users/jeenriquez/RESEARCH/software/Lband_seti/analysis/'
 
     #---------------------------
-
     AAA_candidates = pd.read_csv(dat_dit+'AAA_candidates.v4_1492476400.csv')
-
     targets = list(AAA_candidates.groupby('Source').count().index)
+
+    table_events =''
 
     for target in targets:
         AAA_single = AAA_candidates[AAA_candidates['Source'] == target]
@@ -259,10 +259,12 @@ if __name__ == "__main__":
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
+        for_table = [AAA1_single['Source'].values[0],'%.5f'%AAA1_single['Freq'].values[-1],'%.3f'%AAA1_single['DriftRate'].values[-1],'%.1f'%AAA1_single['SNR'].values[-1]]
+        table_events+='  &  '.join(for_table)+'\ \ \n'
 
-
-
-
+    #Making table of events
+    with open('L_band_target_pairs.lst','w') as file_list:
+        file_list.write(list_targets)
 
     stop
     #Removing a bunch of RFI regions (GPS and so on).
