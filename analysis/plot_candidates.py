@@ -102,7 +102,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
 
         plt.ylabel('Time [s]')
-        fig[1][i].text(f_start + 4.7*(f_stop-f_start)/5.,50 ,'A',color='w',fontsize=25)
+        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5.,50 ,label[i],color='w',fontsize=25)
 
         if i == 0:
             plt.title(target)
