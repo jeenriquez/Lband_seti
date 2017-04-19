@@ -79,7 +79,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     if ion:
         plt.ion()
 
-    if target ='HIP45493':
+    if target == 'HIP45493':
         f_start = 1528.4
         f_stop  = 1528.5
 
@@ -105,7 +105,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         plt.ylabel('Time [s]')
         plt.title(target)
 
-        if i ==0:
+        if i == 0:
             cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.8])
             fig[0].colorbar(this_plot,cax=cax)
 
