@@ -102,9 +102,9 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
 
         plt.ylabel('Time [s]')
-        plt.title(target)
 
         if i == 0:
+            plt.title(target)
             cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.8])
             fig[0].colorbar(this_plot,cax=cax)
 
@@ -226,9 +226,6 @@ if __name__ == "__main__":
     ''' Make it happen moment.
     '''
 
-
-
-
     #---------------------------
     # Read in the full "A list" of stars
     # This comes from the BL database.
@@ -254,8 +251,8 @@ if __name__ == "__main__":
 
         AAA1_single = AAA_single[AAA_single['status'] == 'A1_table'].sort('SNR')
 
-        f_start = AAA1_single['Freq'].values[-1] - 0.01
-        f_stop = AAA1_single['Freq'].values[-1] + 0.01
+        f_start = AAA1_single['Freq'].values[-1] - 0.001
+        f_stop = AAA1_single['Freq'].values[-1] + 0.001
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
