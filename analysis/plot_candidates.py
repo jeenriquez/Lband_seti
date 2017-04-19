@@ -126,7 +126,7 @@ def get_filenames_lis(target):
         '/mnt_blc22/datax2/collate/AGBT16A_999_192/spliced_blc0001020304050607_guppi_57523_70769_HIP17147_0019.gpuspec.0000.fil',
         '/mnt_blc22/datax2/collate/AGBT16A_999_192/spliced_blc0001020304050607_guppi_57523_71116_HIP16341_0020.gpuspec.0000.fil']
 
-    elif target =='Hip20901':
+    elif target =='HIP20901':
         filenames_list=['/mnt_blc22/datax2/collate/AGBT16B_999_03/spliced_blc0001020304050607_guppi_57606_50058_Hip20901_0027.gpuspec.0000.fil',
         '/mnt_blc22/datax2/collate/AGBT16B_999_03/spliced_blc0001020304050607_guppi_57606_50409_Hip19822_0028.gpuspec.0000.fil',
         '/mnt_blc22/datax2/collate/AGBT16B_999_03/spliced_blc0001020304050607_guppi_57606_50760_Hip20901_0029.gpuspec.0000.fil',
@@ -251,8 +251,8 @@ if __name__ == "__main__":
 
         AAA1_single = AAA_single[AAA_single['status'] == 'A1_table'].sort('SNR')
 
-        f_start = AAA1_single['Freq'].values[-1] - 0.1
-        f_stop = AAA1_single['Freq'].values[-1] + 0.1
+        f_start = AAA1_single['Freq'].values[-1] - 0.01
+        f_stop = AAA1_single['Freq'].values[-1] + 0.01
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
