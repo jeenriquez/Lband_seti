@@ -276,7 +276,7 @@ if __name__ == "__main__":
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
-        get_data(filenames_list,target,dat_dit,f_start-0.099,f_stop+0.099)
+        get_data(filenames_list,target,dat_dit,f_start-0.019,f_stop+0.019)
 
 
         for_table = [AAA1_single['Source'].values[0],'%.5f'%AAA1_single['Freq'].values[-1],'%.3f'%AAA1_single['DriftRate'].values[-1],'%.1f'%AAA1_single['SNR'].values[-1]]
