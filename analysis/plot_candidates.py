@@ -83,12 +83,11 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
     if target == 'HIP45493':
         f_start = 1528.4
-        f_stop  = 1528.5
-
+        f_stop  = 1528.49
 
     if target == 'HIP7181':
-        f_start -= 0.009
-        f_stop  += 0.009
+        f_start -= 0.019
+        f_stop  += 0.019
 
     n_plots = len(filenames_list)
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
@@ -276,7 +275,7 @@ if __name__ == "__main__":
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
-        get_data(filenames_list,target,dat_dit,f_start-0.019,f_stop+0.019)
+#        get_data(filenames_list,target,dat_dit,f_start-0.019,f_stop+0.019)
 
 
         for_table = [AAA1_single['Source'].values[0],'%.5f'%AAA1_single['Freq'].values[-1],'%.3f'%AAA1_single['DriftRate'].values[-1],'%.1f'%AAA1_single['SNR'].values[-1]]
