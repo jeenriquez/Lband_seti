@@ -236,7 +236,7 @@ def get_data(filenames_list,target,dat_dit,f_start,f_stop):
 
     for i,filename in enumerate(filenames_list):
 
-        fil_file = Waterfall(filename, f_start=f_start, f_stop=f_stop)
+        fil_file = Filterbank(filename, f_start=f_start, f_stop=f_stop)
         new_filename = filename.replace('.fil','.h5').split('/')[-1]
         fil_file.write_to_hdf5(dat_dit+new_filename)
 
