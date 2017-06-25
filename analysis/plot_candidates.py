@@ -60,7 +60,7 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
         rasterized=True,
         interpolation='nearest',
         extent=extent,
-        cmap='viridis',
+        cmap='viridis_r',
         **kwargs
     )
     if cb:
