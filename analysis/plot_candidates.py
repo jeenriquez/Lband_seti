@@ -82,12 +82,21 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         plt.ion()
 
     if target == 'HIP45493':
-        f_start = 1528.4
-        f_stop  = 1528.49
+#         f_start = 1528.4
+#         f_stop  = 1528.49
+        xf_start = 1528.41
+        xf_stop  = 1528.483
+        y_start = 0.004
+        yf_stop  = 0.004
 
     if target == 'HIP7181':
-        f_start -= 0.019
-        f_stop  += 0.019
+#         f_start -= 0.019
+#         f_stop  += 0.019
+        f_start -= 0.034
+        f_stop  += 0.024
+    else:
+      return None
+#        print target
 
     n_plots = len(filenames_list)
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
@@ -128,7 +137,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #    plt.savefig('Candidate_waterfall_plots.'+target+'.png')
     plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300)
 
-def get_filenames_lis(target):
+def get_filenames_list(target):
 
     if target =='HIP17147':
         filenames_list=['/mnt_blc22/datax2/collate/AGBT16A_999_192/spliced_blc0001020304050607_guppi_57523_69379_HIP17147_0015.gpuspec.0000.fil',
@@ -265,7 +274,7 @@ if __name__ == "__main__":
     for target in targets:
         AAA_single = AAA_candidates[AAA_candidates['Source'] == target]
         print target
-        filenames_list = get_filenames_lis(target)
+        filenames_list = get_filenames_list(target)
 
         AAA1_single = AAA_single[AAA_single['status'] == 'A1_table'].sort('SNR')
 
@@ -275,7 +284,7 @@ if __name__ == "__main__":
 
         make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
-#        get_data(filenames_list,target,dat_dit,f_start-0.019,f_stop+0.019)
+#        get_data(filenames_list,target,dat_dit,f_start-0.099,f_stop+0.099)
 
 
         for_table = [AAA1_single['Source'].values[0],'%.5f'%AAA1_single['Freq'].values[-1],'%.3f'%AAA1_single['DriftRate'].values[-1],'%.1f'%AAA1_single['SNR'].values[-1]]
