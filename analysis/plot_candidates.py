@@ -89,14 +89,14 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         y_start = 0.004
         yf_stop  = 0.004
 
-    if target == 'HIP7181':
+    if target == 'HIP7981':
 #         f_start -= 0.019
 #         f_stop  += 0.019
-        f_start -= 0.034
-        f_stop  += 0.024
+        f_start -= 0.3
+        f_stop  += 0.3
     else:
       return None
-#        print target
+#      print target
 
     n_plots = len(filenames_list)
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
@@ -134,8 +134,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     if not ion:
         plt.show()
 
-#    plt.savefig('Candidate_waterfall_plots.'+target+'.png')
-    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300)
+    plt.savefig('Candidate_waterfall_plots.'+target+'.png')
+#    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300)
 
 def get_filenames_list(target):
 
