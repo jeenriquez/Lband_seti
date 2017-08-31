@@ -1,6 +1,12 @@
 #! /bin/bash
 
-#Usage :  ./do_some_bl /path/command
+#Usage :  
+#     ./do_some_bl "/path/command"  node(s)
+#
+#example: 
+#     ./do_some_bl "python test.py"  blc0{0..7}  
+#     This will run the python test script on all the blc00, blc01, ...blc07 nodes.
+#
 
 command=$1
 shift
