@@ -146,7 +146,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         if i == 0:
             plt.title(target)
-            cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.8])
+            cax = fig[0].add_axes([0.85, 0.15, 0.03, 0.8])
             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
     #Some plot formatting.
@@ -160,7 +160,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     if not ion:
         plt.show()
 
-    plt.savefig('Candidate_waterfall_plots.'+target+'.png')
+    plt.savefig('Candidate_waterfall_plots.'+target+'.png',bbox_inches='tight')
 #    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300)
 
 def get_filenames_list(target):
