@@ -141,6 +141,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
     labeling = ['A','B','A','C','A','D']
 
+    delta_f = np.abs(f_start-f_stop)
+
     for i,filename in enumerate(filenames_list):
         print filename
         plt.subplot(n_plots,1,i+1)
@@ -164,7 +166,6 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     #Some plot formatting.
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
-    delta_f = np.abs(f_start-f_stop)
     print 'delta_f', delta_f
     plt.xticks(np.arange(f_start, f_stop, delta_f/4.), [delta_f/4.,2*delta_f/4.,3*delta_f/4.,4*delta_f/4.])
 
@@ -321,7 +322,7 @@ if __name__ == "__main__":
         f_stop = AAA1_single['Freq'].values[-1] + 0.001
         coarse_channel=AAA1_single['CoarseChanNum'].values[-1]
 
-        make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=False)
+        make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
 #        get_data(filenames_list,target,dat_dit,f_start-0.099,f_stop+0.099)
 
