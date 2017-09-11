@@ -89,6 +89,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
     fontsize=15
 
+    matplotlib.rcParams.update({'font.size': fontsize})
+
     if ion:
         plt.ion()
 
