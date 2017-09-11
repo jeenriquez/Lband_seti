@@ -75,11 +75,11 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     )
     if cb:
         plt.colorbar()
-    plt.xlabel("Frequency [Hz]",fontsize=fontsize)
+    plt.xlabel("Frequency [Hz]",fontdic=font)
     if MJD_time:
-        plt.ylabel("Time [MJD]",fontsize=fontsize)
+        plt.ylabel("Time [MJD]",fontdic=font)
     else:
-        plt.ylabel("Time [s]",fontsize=fontsize)
+        plt.ylabel("Time [s]",fontdic=font)
 
     return this_plot
 
@@ -141,7 +141,9 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
     labeling = ['A','B','A','C','A','D']
 
-    delta_f = np.abs(f_start-f_stop)
+#    delta_f = ('%f0.6'%np.abs(f_start-f_stop))
+    delta_f = np.abs(f_start-f_stop)*1e6
+    mid_f = np.abs(f_start+f_stop)/2.
 
     for i,filename in enumerate(filenames_list):
         print filename
@@ -168,7 +170,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     print 'delta_f', delta_f
-    plt.xticks(np.arange(f_start, f_stop, delta_f/4.), [delta_f/4.,2*delta_f/4.,3*delta_f/4.,4*delta_f/4.])
+    plt.xticks(np.arange((f_start-mid_f)*1e6, (f_stop-mid_f)*1e6, delta_f/4.))
 
 
     # Fine-tune figure; make subplots close to each other and hide x ticks for
