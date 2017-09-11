@@ -28,7 +28,7 @@ MAX_HEADER_BLOCKS   = 100                    # Max size of header (in 512-byte b
 #------
 
 
-def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False,MJD_time=False, **kwargs):
+def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False,freq_label=False,MJD_time=False, **kwargs):
     """ Plot waterfall of data
 
     Args:
@@ -75,7 +75,9 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     )
     if cb:
         plt.colorbar()
-    plt.xlabel("Frequency [Hz]",fontdict=font)
+
+    if freq_label:
+        plt.xlabel("Frequency [Hz]",fontdict=font)
     if MJD_time:
         plt.ylabel("Time [MJD]",fontdict=font)
     else:
@@ -170,7 +172,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     print 'delta_f', delta_f
-    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[ int(loc_freq) for loc_freq in np.arange((f_start-mid_f)*1e6, (f_stop-mid_f)*1e6, delta_f/4.) ])
+    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[ int(loc_freq) for loc_freq in np.arange((f_start-mid_f)*1e6, (f_stop-mid_f)*1e6, delta_f*1e6/4.) ])
+    plt.xlabel("Relative Frequency from %f [Hz]"%mid_f,fontdict=font)
 
     #to plot color bar. for now.
     cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
