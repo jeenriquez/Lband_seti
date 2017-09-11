@@ -78,6 +78,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     '''
     #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
 
+    fontsize=15
+
     if ion:
         plt.ion()
 
@@ -113,15 +115,18 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         plt.subplot(n_plots,1,i+1)
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
-        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
+#        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
+        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std,vmax=A1_avg+5.*A1_std,**kwargs)
 
-        plt.ylabel('Time [s]')
+
+
+        plt.ylabel('Time [s]',fontsize=fontsize)
         fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=25)
 
         if i == 0:
             plt.title(target)
             cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.8])
-            fig[0].colorbar(this_plot,cax=cax,label='Power')
+            fig[0].colorbar(this_plot,cax=cax,label='Power',fontsize=fontsize)
 
     #Some plot formatting.
     ax = plt.gca()
@@ -260,7 +265,7 @@ if __name__ == "__main__":
     local_host = socket.gethostname()
 
     if 'bl' in local_host:
-        dat_dit = '/datax/eenriquez/L_band_headquarters/hits_logistics/'
+        dat_dit = '/datax/users/eenriquez/L_band_headquarters/hits_logistics/'
 
     else:
         dat_dit = '/Users/jeenriquez/RESEARCH/software/Lband_seti/analysis/'
