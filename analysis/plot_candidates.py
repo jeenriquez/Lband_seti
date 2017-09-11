@@ -159,9 +159,9 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         if i == 0:
             plt.title(target)
 
-        if i == len(filenames_list)-2:
-            cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
-            fig[0].colorbar(this_plot,cax=cax,label='Power')
+#         if i == len(filenames_list)-2:
+#             cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
+#             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
         if i != len(filenames_list)-1:
             plt.xticks(np.arange(f_start, f_stop, delta_f/4.), ['','','',''])
@@ -171,6 +171,10 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     print 'delta_f', delta_f
     plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[ int(loc_freq) for loc_freq in np.arange((f_start-mid_f)*1e6, (f_stop-mid_f)*1e6, delta_f/4.) ])
+
+    #to plot color bar. for now.
+    cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
+    fig[0].colorbar(this_plot,cax=cax,label='Power')
 
     # Fine-tune figure; make subplots close to each other and hide x ticks for
     # all but bottom plot.
