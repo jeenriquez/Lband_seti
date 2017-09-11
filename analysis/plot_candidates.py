@@ -89,7 +89,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #             'size'   : 16,
 #             }
 
-    font = {'family' : 'serif',
+    font = {'family' : 'Times New Roman', # 'serif',
 #            'weight' : 'bold',
             'size'   : fontsize}
 
@@ -146,7 +146,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         if i == 0:
             plt.title(target)
-            cax = fig[0].add_axes([0.85, 0.15, 0.03, 0.8])
+            cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.75])
             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
     #Some plot formatting.
