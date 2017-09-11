@@ -81,7 +81,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     '''
     #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
 
-    fontsize=13
+    fontsize=14
 
 #     font = {'family' : 'serif',
 #             'color'  : 'darkred',
@@ -146,7 +146,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         if i == 0:
             plt.title(target)
-            cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.75])
+            cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
     #Some plot formatting.
