@@ -75,11 +75,11 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     )
     if cb:
         plt.colorbar()
-    plt.xlabel("Frequency [Hz]",fontdic=font)
+    plt.xlabel("Frequency [Hz]",fontdict=font)
     if MJD_time:
-        plt.ylabel("Time [MJD]",fontdic=font)
+        plt.ylabel("Time [MJD]",fontdict=font)
     else:
-        plt.ylabel("Time [s]",fontdic=font)
+        plt.ylabel("Time [s]",fontdict=font)
 
     return this_plot
 
