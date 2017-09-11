@@ -68,7 +68,7 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     )
     if cb:
         plt.colorbar()
-    plt.xlabel("Frequency [MHz]",fontsize=fontsize)
+    plt.xlabel("Frequency [Hz]",fontsize=fontsize)
     if MJD_time:
         plt.ylabel("Time [MJD]",fontsize=fontsize)
     else:
@@ -104,6 +104,13 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     else:
       return None
 
+
+#     if target == 'HIP4436':
+#         print target
+#     else:
+#       return None
+#       print target
+
     if target == 'HIP45493':
 #         f_start = 1528.4
 #         f_stop  = 1528.49
@@ -111,15 +118,6 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         xf_stop  = 1528.483
         y_start = 0.004
         yf_stop  = 0.004
-
-    if target == 'HIP4436':
-        print target
-    else:
-#      return None
-      print target
-
-
-
 
     if target == 'HIP7981':
 #         f_start -= 0.019
@@ -161,13 +159,13 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     #Some plot formatting.
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
-    plt.xticks(np.arange(f_start, f_stop, (f_stop-f_start)/4.))
+    delta_f = np.abs(f_start-f_stop)
+    plt.xticks(np.arange(f_start, f_stop, delta_f/4.), [delta_f/4.,2*delta_f/4.,3*delta_f/4.,4*delta_f/4.])
+
 
     # Fine-tune figure; make subplots close to each other and hide x ticks for
     # all but bottom plot.
     plt.subplots_adjust(hspace=0,wspace=0)
-#     if not ion:
-#         plt.show()
 
     plt.savefig('Candidate_waterfall_plots.'+target+'.png',bbox_inches='tight')
 #    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300,bbox_inches='tight')
