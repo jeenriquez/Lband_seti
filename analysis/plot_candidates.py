@@ -154,14 +154,15 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #        plt.ylabel('Time [s]',fontsize=fontsize)
 #        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=fontsize)
 
-        plt.xticks(np.arange(f_start, f_stop, delta_f/4.), ['','','',''])
-
         if i == 0:
             plt.title(target)
 
         if i == len(filenames_list)-2:
             cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
             fig[0].colorbar(this_plot,cax=cax,label='Power')
+
+        if i =! len(filenames_list)-1:
+            plt.xticks(np.arange(f_start, f_stop, delta_f/4.), ['','','',''])
 
     #Some plot formatting.
     ax = plt.gca()
@@ -322,7 +323,7 @@ if __name__ == "__main__":
         f_stop = AAA1_single['Freq'].values[-1] + 0.001
         coarse_channel=AAA1_single['CoarseChanNum'].values[-1]
 
-        make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
+        make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True168)
 
 #        get_data(filenames_list,target,dat_dit,f_start-0.099,f_stop+0.099)
 
