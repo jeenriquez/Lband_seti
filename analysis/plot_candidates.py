@@ -5,6 +5,7 @@ import socket
 import pdb;# pdb.set_trace()
 import time
 import os
+import matplotlib
 import matplotlib.pylab as plt
 from blimpy import Filterbank
 from blimpy import Waterfall
@@ -87,9 +88,14 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     '''
     #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
 
-    fontsize=15
+    fontsize=10
 
-    matplotlib.rcParams.update({'font.size': fontsize})
+    font = {'family' : 'normal',
+#            'weight' : 'bold',
+            'size'   : fontsize}
+
+    matplotlib.rc('font', **font)
+#    matplotlib.rcParams.update({'font.size': fontsize})
 
     if ion:
         plt.ion()
