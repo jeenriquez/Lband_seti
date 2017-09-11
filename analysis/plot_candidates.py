@@ -323,7 +323,7 @@ if __name__ == "__main__":
         f_stop = AAA1_single['Freq'].values[-1] + 0.001
         coarse_channel=AAA1_single['CoarseChanNum'].values[-1]
 
-        make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True168)
+        make_waterfall_plots(filenames_list,target,f_start,f_stop,ion=True)
 
 #        get_data(filenames_list,target,dat_dit,f_start-0.099,f_stop+0.099)
 
