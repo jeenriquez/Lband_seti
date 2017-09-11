@@ -134,7 +134,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
 
     fil = Filterbank(filenames_list[0], f_start=f_start, f_stop=f_stop)
-    A1_avg = fil.data.mean()
+    A1_avg = np.median(fil.data)
     A1_max = fil.data.max()
     A1_std = np.std(fil.data)
 
@@ -168,7 +168,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #         plt.show()
 
     plt.savefig('Candidate_waterfall_plots.'+target+'.png',bbox_inches='tight')
-#    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300)
+#    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300,bbox_inches='tight')
 
 def get_filenames_list(target):
 
