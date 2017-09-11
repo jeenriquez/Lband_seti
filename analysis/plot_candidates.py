@@ -99,6 +99,9 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         xf_stop  = 1528.483
         y_start = 0.004
         yf_stop  = 0.004
+
+    if target == 'HIP4436':
+        print target
     else:
       return None
 #      print target
