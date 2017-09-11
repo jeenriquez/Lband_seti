@@ -89,7 +89,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #             'size'   : 16,
 #             }
 
-    font = {'family' : 'Times New Roman', # 'serif',
+    font = {'family' : 'serif',
 #            'weight' : 'bold',
             'size'   : fontsize}
 
@@ -139,14 +139,14 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
 #        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
-        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*1,vmax=A1_avg+5.*A1_std,**kwargs)
+        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*0,vmax=A1_avg+3.*A1_std,**kwargs)
 
 #        plt.ylabel('Time [s]',fontsize=fontsize)
 #        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=fontsize)
 
         if i == 0:
             plt.title(target)
-            cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.75])
+            cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.75])
             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
     #Some plot formatting.
@@ -157,8 +157,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     # Fine-tune figure; make subplots close to each other and hide x ticks for
     # all but bottom plot.
     plt.subplots_adjust(hspace=0,wspace=0)
-    if not ion:
-        plt.show()
+#     if not ion:
+#         plt.show()
 
     plt.savefig('Candidate_waterfall_plots.'+target+'.png',bbox_inches='tight')
 #    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300)
