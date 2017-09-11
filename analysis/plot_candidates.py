@@ -37,6 +37,9 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
         cb (bool): for plotting the colorbar
         kwargs: keyword args to be passed to matplotlib imshow()
     """
+
+    fontsize=15
+
     plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
 
 
@@ -65,11 +68,11 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     )
     if cb:
         plt.colorbar()
-    plt.xlabel("Frequency [MHz]")
+    plt.xlabel("Frequency [MHz]",fontsize=fontsize)
     if MJD_time:
-        plt.ylabel("Time [MJD]")
+        plt.ylabel("Time [MJD]",fontsize=fontsize)
     else:
-        plt.ylabel("Time [s]")
+        plt.ylabel("Time [s]",fontsize=fontsize)
 
     return this_plot
 
@@ -116,9 +119,9 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
 #        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
-        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*0.5,vmax=A1_avg+3.*A1_std,**kwargs)
+        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*0,vmax=A1_avg+10.*A1_std,**kwargs)
 
-        plt.ylabel('Time [s]',fontsize=fontsize)
+#        plt.ylabel('Time [s]',fontsize=fontsize)
 #        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=fontsize)
 
         if i == 0:
