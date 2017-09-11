@@ -161,7 +161,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
             cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
-        if i =! len(filenames_list)-1:
+        if i != len(filenames_list)-1:
             plt.xticks(np.arange(f_start, f_stop, delta_f/4.), ['','','',''])
 
     #Some plot formatting.
