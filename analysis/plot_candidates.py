@@ -116,9 +116,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
 #        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
-        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std,vmax=A1_avg+5.*A1_std,**kwargs)
-
-
+        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*1.5,vmax=A1_avg+5.*A1_std,**kwargs)
 
         plt.ylabel('Time [s]',fontsize=fontsize)
         fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=25)
@@ -126,7 +124,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         if i == 0:
             plt.title(target)
             cax = fig[0].add_axes([0.9, 0.1, 0.03, 0.8])
-            fig[0].colorbar(this_plot,cax=cax,label='Power',fontsize=fontsize)
+            fig[0].colorbar(this_plot,cax=cax,label='Power')
 
     #Some plot formatting.
     ax = plt.gca()
