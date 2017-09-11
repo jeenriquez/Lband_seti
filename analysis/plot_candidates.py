@@ -142,7 +142,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     labeling = ['A','B','A','C','A','D']
 
 #    delta_f = ('%f0.6'%np.abs(f_start-f_stop))
-    delta_f = np.abs(f_start-f_stop)*1e6
+    delta_f = np.abs(f_start-f_stop)
     mid_f = np.abs(f_start+f_stop)/2.
 
     for i,filename in enumerate(filenames_list):
@@ -151,7 +151,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
 #        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
-        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*0,vmax=A1_avg+3.*A1_std,**kwargs)
+        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*0,vmax=A1_avg+5.*A1_std,**kwargs)
 
 #        plt.ylabel('Time [s]',fontsize=fontsize)
 #        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=fontsize)
@@ -163,7 +163,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #             cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
 #             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
-        if i != len(filenames_list)-1:
+        if i < len(filenames_list)-1:
             plt.xticks(np.arange(f_start, f_stop, delta_f/4.), ['','','',''])
 
     #Some plot formatting.
