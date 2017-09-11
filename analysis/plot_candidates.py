@@ -38,10 +38,16 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
         kwargs: keyword args to be passed to matplotlib imshow()
     """
 
+    font = {'family' : 'serif',
+            'color'  : 'darkred',
+            'weight' : 'normal',
+            'size'   : 16,
+            }
+
+
     fontsize=15
 
     plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
-
 
     # Make sure waterfall plot is under 4k*4k
     dec_fac_x, dec_fac_y = 1, 1
@@ -93,6 +99,10 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         xf_stop  = 1528.483
         y_start = 0.004
         yf_stop  = 0.004
+    else:
+      return None
+#      print target
+
 
     if target == 'HIP7981':
 #         f_start -= 0.019
@@ -100,8 +110,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
         f_start -= 0.3
         f_stop  += 0.3
     else:
-      return None
-#      print target
+#      return None
+      print target
 
     n_plots = len(filenames_list)
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
