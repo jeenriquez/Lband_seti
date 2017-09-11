@@ -39,7 +39,14 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
         kwargs: keyword args to be passed to matplotlib imshow()
     """
 
-    fontsize=13
+
+    fontsize=18
+
+    font = {'family' : 'serif',
+            'weight' : 'bold',
+            'size'   : fontsize}
+
+    matplotlib.rc('font', **font)
 
     plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
 
@@ -81,16 +88,12 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     '''
     #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
 
-    fontsize=20
-
-#     font = {'family' : 'serif',
-#             'color'  : 'darkred',
-#             'weight' : 'normal',
-#             'size'   : 16,
-#             }
+    fontsize=18
 
     font = {'family' : 'serif',
             'weight' : 'bold',
+#             'color'  : 'darkred',
+#             'weight' : 'normal',
             'size'   : fontsize}
 
     matplotlib.rc('font', **font)
@@ -149,10 +152,12 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #        plt.ylabel('Time [s]',fontsize=fontsize)
 #        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=fontsize)
 
+        plt.xticks(np.arange(f_start, f_stop, delta_f/4.), ['','','',''])
+
         if i == 0:
             plt.title(target)
 
-        if i == len(filenames_list)-1:
+        if i == len(filenames_list)-2:
             cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
             fig[0].colorbar(this_plot,cax=cax,label='Power')
 
@@ -160,6 +165,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     delta_f = np.abs(f_start-f_stop)
+    print 'delta_f', delta_f
     plt.xticks(np.arange(f_start, f_stop, delta_f/4.), [delta_f/4.,2*delta_f/4.,3*delta_f/4.,4*delta_f/4.])
 
 
