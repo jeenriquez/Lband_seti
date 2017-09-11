@@ -170,8 +170,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     print 'delta_f', delta_f
-    plt.xticks(np.arange((f_start-mid_f)*1e6, (f_stop-mid_f)*1e6, delta_f/4.))
-
+    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[ int(loc_freq) for loc_freq in np.arange((f_start-mid_f)*1e6, (f_stop-mid_f)*1e6, delta_f/4.) ])
 
     # Fine-tune figure; make subplots close to each other and hide x ticks for
     # all but bottom plot.
