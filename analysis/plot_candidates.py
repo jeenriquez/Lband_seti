@@ -39,14 +39,7 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
         kwargs: keyword args to be passed to matplotlib imshow()
     """
 
-    font = {'family' : 'serif',
-            'color'  : 'darkred',
-            'weight' : 'normal',
-            'size'   : 16,
-            }
-
-
-    fontsize=15
+    fontsize=13
 
     plot_f, plot_data = fil.grab_data(f_start, f_stop, if_id)
 
@@ -88,9 +81,15 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     '''
     #filutil spliced_blc0001020304050607_guppi_57802_28029_HIP72944_0002.gpuspec.0000.fil -b 1681.407 -e 1681.409 -p w
 
-    fontsize=10
+    fontsize=13
 
-    font = {'family' : 'normal',
+#     font = {'family' : 'serif',
+#             'color'  : 'darkred',
+#             'weight' : 'normal',
+#             'size'   : 16,
+#             }
+
+    font = {'family' : 'serif',
 #            'weight' : 'bold',
             'size'   : fontsize}
 
@@ -140,7 +139,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 
         fil = Filterbank(filename, f_start=f_start, f_stop=f_stop)
 #        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg,vmax=A1_avg+10.*A1_std,**kwargs)
-        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*0,vmax=A1_avg+10.*A1_std,**kwargs)
+        this_plot = plot_waterfall(fil,f_start=f_start, f_stop=f_stop,vmin=A1_avg-A1_std*1,vmax=A1_avg+5.*A1_std,**kwargs)
 
 #        plt.ylabel('Time [s]',fontsize=fontsize)
 #        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=fontsize)
