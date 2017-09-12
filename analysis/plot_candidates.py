@@ -104,10 +104,11 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     if ion:
         plt.ion()
 
-    if target == 'HIP65352':
-        print target
-    else:
-      return None
+#     if target == 'HIP65352':
+#         print target
+#     else:
+#       return None
+#       print target
 
 
 #     if target == 'HIP4436':
@@ -172,19 +173,19 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     print 'delta_f', delta_f
-    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[ int(loc_freq) for loc_freq in np.arange((f_start-mid_f)*1e6, (f_stop-mid_f)*1e6, delta_f*1e6/4.) ])
-    plt.xlabel("Relative Frequency from %f [Hz]"%mid_f,fontdict=font)
+    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[ 1e3*int((loc_freq)*1e3) for loc_freq in np.arange((f_start-mid_f), (f_stop-mid_f), delta_f/4.) ])
+    plt.xlabel("Relative Frequency [Hz] from %f MHz"%mid_f,fontdict=font)
 
     #to plot color bar. for now.
     cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
-    fig[0].colorbar(this_plot,cax=cax,label='Power')
+    fig[0].colorbar(this_plot,cax=cax,label='Power [Arbitrary Units]')
 
     # Fine-tune figure; make subplots close to each other and hide x ticks for
     # all but bottom plot.
     plt.subplots_adjust(hspace=0,wspace=0)
 
     plt.savefig('Candidate_waterfall_plots.'+target+'.png',bbox_inches='tight')
-#    plt.savefig('Candidate_waterfall_plots.'+target+'.eps', format='eps', dpi=300,bbox_inches='tight')
+#    plt.savefig('Candidate_waterfall_plots.'+target+'.pdf', format='pdf', dpi=300,bbox_inches='tight')
 
 def get_filenames_list(target):
 
