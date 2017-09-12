@@ -173,7 +173,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     print 'delta_f', delta_f
-    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[ 1e3*int((loc_freq)*1e3) for loc_freq in np.arange((f_start-mid_f), (f_stop-mid_f), delta_f/4.) ])
+    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[round(loc_freq) for loc_freq in np.arange((f_start-mid_f), (f_stop-mid_f), delta_f/4.)*1e6 ])
     plt.xlabel("Relative Frequency [Hz] from %f MHz"%mid_f,fontdict=font)
 
     #to plot color bar. for now.
