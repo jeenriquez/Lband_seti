@@ -287,7 +287,6 @@ def get_filenames_list(target):
 
     return filenames_list
 
-
 def get_data(filenames_list,target,dat_dit,f_start,f_stop):
     ''' save some data.
     '''
@@ -297,7 +296,6 @@ def get_data(filenames_list,target,dat_dit,f_start,f_stop):
         fil_file = Filterbank(filename, f_start=f_start, f_stop=f_stop)
         new_filename = filename.replace('.fil','.h5').split('/')[-1]
         fil_file.write_to_hdf5(dat_dit+new_filename)
-
 
 if __name__ == "__main__":
     ''' Make it happen moment.
