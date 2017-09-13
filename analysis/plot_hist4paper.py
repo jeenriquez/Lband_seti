@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import pandas as pd
+import matplotlib
 import matplotlib.pylab as plt
 
 #------------------------------------------------
@@ -49,7 +50,6 @@ plt.ylabel('Counts [log]')
 plt.legend()
 plt.savefig('Frequency_hist.png')
 plt.savefig('Frequency_hist.pdf', format='pdf', dpi=400)
-
 
 plt.figure(figsize=[10,8])
 plt.clf()
