@@ -565,13 +565,13 @@ plt.savefig('Transmitter_Rarity_FoM.pdf', format='pdf', dpi=300,bbox_inches='tig
 #---------------------------
 # Survey speed.
 
-fontsize=18
+fontsize=19
 markersize = 20
 ticksize = fontsize - 2
 
 font = {'family' : 'serif',
-        'weight' : 'bold',
-        'size'   : fontsize-4}
+#        'weight' : 'bold',
+        'size'   : fontsize-5}
 
 matplotlib.rc('font', **font)
 
@@ -601,7 +601,7 @@ plt.xlabel('Year',fontdict=font,fontsize=fontsize)
 plt.ylabel('Relative \n Survey Speed \n[log]',fontdict=font,fontsize=fontsize)
 plt.xticks(fontsize = ticksize)
 plt.yticks(fontsize = ticksize)
-#plt.ylim(-8,2)
+plt.ylim(-11.5,2)
 plt.xlim(1970,2020)
 
 #---------------------------
@@ -659,7 +659,7 @@ plt.yticks(fontsize = ticksize)
 
 axes = plt.gca()
 plt.xlim(1970,2020)
-axes.set_ylim([-7,1])
+axes.set_ylim([-7,1.5])
 axes.xaxis.set_tick_params(labelsize=ticksize)
 axes.xaxis.tick_top()
 

@@ -189,7 +189,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     plt.subplots_adjust(hspace=0,wspace=0)
 
     plt.savefig('Candidate_waterfall_plots.'+target+'.png',bbox_inches='tight')
-#    plt.savefig('Candidate_waterfall_plots.'+target+'.pdf', format='pdf', dpi=300,bbox_inches='tight')
+    plt.savefig('Candidate_waterfall_plots.'+target+'.pdf', format='pdf', dpi=300,bbox_inches='tight')
 
 def get_filenames_list(target):
 
