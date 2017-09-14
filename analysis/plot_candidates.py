@@ -43,7 +43,7 @@ def plot_waterfall(fil, f_start=None, f_stop=None, if_id=0, logged=True,cb=False
     fontsize=18
 
     font = {'family' : 'serif',
-            'weight' : 'bold',
+#            'weight' : 'bold',
             'size'   : fontsize}
 
     matplotlib.rc('font', **font)
@@ -93,7 +93,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     fontsize=18
 
     font = {'family' : 'serif',
-            'weight' : 'bold',
+#            'weight' : 'bold',
 #             'color'  : 'darkred',
 #             'weight' : 'normal',
             'size'   : fontsize}
@@ -130,9 +130,13 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #         f_stop  += 0.019
         f_start -= 0.3
         f_stop  += 0.3
+        factor = 1e3
+        units = 'kHz'
     else:
 #      return None
-      print target
+        factor = 1e6
+        units = 'Hz'
+        print target
 
     n_plots = len(filenames_list)
     fig = plt.subplots(n_plots, sharex=True, sharey=True,figsize=(10, 2*n_plots))
@@ -173,8 +177,8 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
     ax = plt.gca()
     ax.get_xaxis().get_major_formatter().set_useOffset(False)
     print 'delta_f', delta_f
-    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[round(loc_freq) for loc_freq in np.arange((f_start-mid_f), (f_stop-mid_f), delta_f/4.)*1e6 ])
-    plt.xlabel("Relative Frequency [Hz] from %f MHz"%mid_f,fontdict=font)
+    plt.xticks(np.arange(f_start, f_stop, delta_f/4.),[round(loc_freq) for loc_freq in np.arange((f_start-mid_f), (f_stop-mid_f), delta_f/4.)*factor ])
+    plt.xlabel("Relative Frequency [%s] from %f MHz"%(units,mid_f),fontdict=font)
 
     #to plot color bar. for now.
     cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
