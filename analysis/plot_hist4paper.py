@@ -13,7 +13,6 @@ print 'Reading data.'
 AAA_candidates = pd.read_csv(dir_loc+'All_hits_turbo_seti.csv')
 AAA_candidates_V4 = pd.read_csv(dir_loc+'AAA_candidates.v4_1492476400.csv')
 
-
 #------------------------------------------------
 print 'Making first cut.'
 
@@ -48,7 +47,7 @@ AAA_candidates_V4['Freq'].plot.hist(bins=50,logy=True,color='orange',edgecolor =
 
 plt.xlabel('Frequency [MHz]',fontdict=font)
 plt.ylabel('Counts [log]',fontdict=font)
-plt.legend()
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05),fancybox=True, shadow=True)
 plt.savefig('Frequency_hist.png')
 plt.savefig('Frequency_hist.pdf', format='pdf', dpi=400)
 
@@ -61,6 +60,6 @@ AAA_candidates_V4['DriftRate'].plot.hist(bins=51,logy=True,color='orange',edgeco
 
 plt.xlabel('Drift Rate [Hz/sec]',fontdict=font)
 plt.ylabel('Counts [log]',fontdict=font)
-plt.legend()
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05),fancybox=True, shadow=True, ncol=3)
 plt.savefig('Drift_hist.png')
 plt.savefig('Drift_hist.pdf', format='pdf', dpi=400)
