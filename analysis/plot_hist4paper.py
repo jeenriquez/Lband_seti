@@ -47,9 +47,9 @@ AAA_candidates_V4['Freq'].plot.hist(bins=50,logy=True,color='orange',edgecolor =
 
 plt.xlabel('Frequency [MHz]',fontdict=font)
 plt.ylabel('Counts [log]',fontdict=font)
-plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05),fancybox=True, shadow=True)
-plt.savefig('Frequency_hist.png')
-plt.savefig('Frequency_hist.pdf', format='pdf', dpi=400)
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2),fancybox=True, shadow=True)
+plt.savefig('Frequency_hist.png',bbox_inches='tight')
+plt.savefig('Frequency_hist.pdf', format='pdf', dpi=400,bbox_inches='tight')
 
 plt.figure(figsize=[10,8])
 print 'Plotting Drift Rate Histrogram.'
@@ -60,6 +60,6 @@ AAA_candidates_V4['DriftRate'].plot.hist(bins=51,logy=True,color='orange',edgeco
 
 plt.xlabel('Drift Rate [Hz/sec]',fontdict=font)
 plt.ylabel('Counts [log]',fontdict=font)
-plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05),fancybox=True, shadow=True, ncol=3)
-plt.savefig('Drift_hist.png')
-plt.savefig('Drift_hist.pdf', format='pdf', dpi=400)
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.25),fancybox=True, shadow=True)
+plt.savefig('Drift_hist.png',bbox_inches='tight')
+plt.savefig('Drift_hist.pdf', format='pdf', dpi=400,bbox_inches='tight')

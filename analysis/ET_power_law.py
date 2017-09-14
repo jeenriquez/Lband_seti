@@ -558,7 +558,7 @@ plt.ylim(-10,4)
 plt.xlim(10,23)
 plt.legend(numpoints=1,scatterpoints=1,fancybox=True, shadow=True)
 
-plt.savefig('Transmitter_Rarity_FoM.eps', format='eps', dpi=300)
+plt.savefig('Transmitter_Rarity_FoM.eps', format='eps', dpi=300,bbox_inches='tight')
 
 #---------------------------
 # Survey speed.
@@ -661,7 +661,7 @@ axes.xaxis.tick_top()
 
 plt.legend(numpoints=1,loc='upper center', bbox_to_anchor=(0.5, -0.05),fancybox=True, shadow=True, ncol=3)
 
-plt.savefig('Other_FoM.eps', format='eps', dpi=300)
+plt.savefig('Other_FoM.eps', format='eps', dpi=300,bbox_inches='tight')
 
 #---------------------------
 # Drake figure of merit.
