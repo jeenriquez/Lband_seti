@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 from astropy import units as u
 from matplotlib.patches import Polygon
@@ -570,7 +571,7 @@ ticksize = fontsize - 2
 
 font = {'family' : 'serif',
         'weight' : 'bold',
-        'size'   : fontsize}
+        'size'   : fontsize-4}
 
 matplotlib.rc('font', **font)
 
@@ -596,8 +597,8 @@ plt.plot([2018],[np.log10(5e9/800e6)],'hw',markeredgecolor='k',markersize = mark
 
 plt.plot([1970,2020],[0,0],'k--')
 
-plt.xlabel('Year',fontdict=font)
-plt.ylabel('Relative \n Survey Speed \n[log]',fontdict=font)
+plt.xlabel('Year',fontdict=font,fontsize=fontsize)
+plt.ylabel('Relative \n Survey Speed \n[log]',fontdict=font,fontsize=fontsize)
 plt.xticks(fontsize = ticksize)
 plt.yticks(fontsize = ticksize)
 #plt.ylim(-8,2)
@@ -652,7 +653,7 @@ plt.plot([1973],np.log10(Verschuur_DFM[0]/BL_DFM),'sm',color ='#efda21',markered
 plt.plot([1970,2020],[0,0],'k--')
 
 #plt.xlabel('Year',fontsize=fontsize)
-plt.ylabel('Relative \n Drake Figure of Merit \n[log]',fontdict=font)
+plt.ylabel('Relative \n Drake Figure of Merit \n[log]',fontdict=font,fontsize=fontsize)
 plt.xticks(fontsize = ticksize)
 plt.yticks(fontsize = ticksize)
 
