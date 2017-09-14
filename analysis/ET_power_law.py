@@ -558,14 +558,22 @@ plt.ylim(-10,4)
 plt.xlim(10,23)
 plt.legend(numpoints=1,scatterpoints=1,fancybox=True, shadow=True)
 
-plt.savefig('Transmitter_Rarity_FoM.eps', format='eps', dpi=300,bbox_inches='tight')
+plt.savefig('Transmitter_Rarity_FoM.png', format='png',bbox_inches='tight')
+plt.savefig('Transmitter_Rarity_FoM.pdf', format='pdf', dpi=300,bbox_inches='tight')
 
 #---------------------------
 # Survey speed.
 
+fontsize=18
 markersize = 20
-fontsize = 18
 ticksize = fontsize - 2
+
+font = {'family' : 'serif',
+        'weight' : 'bold',
+        'size'   : fontsize}
+
+matplotlib.rc('font', **font)
+
 #fig = plt.subplots(2, sharex=True,figsize=(15, 10))
 #plt.subplot(2,1,1)
 #cax = fig[0].add_axes([0.2, 0.6, 0.7, 0.3])   #l,b,w,h
@@ -588,8 +596,8 @@ plt.plot([2018],[np.log10(5e9/800e6)],'hw',markeredgecolor='k',markersize = mark
 
 plt.plot([1970,2020],[0,0],'k--')
 
-plt.xlabel('Year',fontsize=fontsize)
-plt.ylabel('Relative \n Survey Speed \n[log]',fontsize=fontsize)
+plt.xlabel('Year',fontdict=font)
+plt.ylabel('Relative \n Survey Speed \n[log]',fontdict=font)
 plt.xticks(fontsize = ticksize)
 plt.yticks(fontsize = ticksize)
 #plt.ylim(-8,2)
@@ -644,7 +652,7 @@ plt.plot([1973],np.log10(Verschuur_DFM[0]/BL_DFM),'sm',color ='#efda21',markered
 plt.plot([1970,2020],[0,0],'k--')
 
 #plt.xlabel('Year',fontsize=fontsize)
-plt.ylabel('Relative \n Drake Figure of Merit \n[log]',fontsize=fontsize)
+plt.ylabel('Relative \n Drake Figure of Merit \n[log]',fontdict=font)
 plt.xticks(fontsize = ticksize)
 plt.yticks(fontsize = ticksize)
 
@@ -661,7 +669,8 @@ axes.xaxis.tick_top()
 
 plt.legend(numpoints=1,loc='upper center', bbox_to_anchor=(0.5, -0.05),fancybox=True, shadow=True, ncol=3)
 
-plt.savefig('Other_FoM.eps', format='eps', dpi=300,bbox_inches='tight')
+plt.savefig('Other_FoM.png', format='png',bbox_inches='tight')
+plt.savefig('Other_FoM.pdf', format='pdf', dpi=300,bbox_inches='tight')
 
 #---------------------------
 # Drake figure of merit.

@@ -60,6 +60,6 @@ AAA_candidates_V4['DriftRate'].plot.hist(bins=51,logy=True,color='orange',edgeco
 
 plt.xlabel('Drift Rate [Hz/sec]',fontdict=font)
 plt.ylabel('Counts [log]',fontdict=font)
-plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.25),fancybox=True, shadow=True)
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2),fancybox=True, shadow=True)
 plt.savefig('Drift_hist.png',bbox_inches='tight')
 plt.savefig('Drift_hist.pdf', format='pdf', dpi=400,bbox_inches='tight')
