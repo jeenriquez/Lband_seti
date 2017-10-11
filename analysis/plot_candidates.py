@@ -164,7 +164,7 @@ def make_waterfall_plots(filenames_list,target,f_start,f_stop,ion = False,**kwar
 #        fig[1][i].text(f_start + 4.5*(f_stop-f_start)/5., 50 ,labeling[i],color='w',fontsize=fontsize)
 
         if i == 0:
-            plt.title(target)
+            plt.title(target.replace('HIP','HIP '))
 
 #         if i == len(filenames_list)-2:
 #             cax = fig[0].add_axes([0.9, 0.11, 0.03, 0.77])
